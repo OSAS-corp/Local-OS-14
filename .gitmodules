@@ -2,3 +2,7 @@
 	path = RobustToolbox
 	url = https://github.com/space-wizards/RobustToolbox.git
 	branch = master
+[submodule "StyleSheet"]
+	path = StyleSheet
+	url = https://github.com/AtaraxiaSpaceFoundation/StyleSheet.git
+	branch = master

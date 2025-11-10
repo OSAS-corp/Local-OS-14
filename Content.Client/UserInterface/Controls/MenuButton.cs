@@ -42,6 +42,19 @@ public sealed class MenuButton : ContainerButton
 
     public string AppendStyleClass { set => AddStyleClass(value); }
     public Texture? Icon { get => _buttonIcon!.Texture; set => _buttonIcon!.Texture = value; }
+    // Orion-Start
+    public Vector2? IconScale
+    {
+        get => _buttonIcon?.TextureScale;
+        set
+        {
+            if (_buttonIcon == null || value == null)
+                return;
+
+            _buttonIcon.TextureScale = value.Value;
+        }
+    }
+    // Orion-End
 
     public BoundKeyFunction BoundKey
     {
