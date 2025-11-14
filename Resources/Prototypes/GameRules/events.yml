@@ -180,8 +180,7 @@
     - id: MothroachSpawn # DeltaV
     - id: DerelictCyborgSyndicateSpawn # Goobstation - usually calm
 #    - id: MalignRiftSpawn # DeltaV | Orion-Remove
-    - id: FloorGoblinSpawn # Goobstation
-    - id: HellGooseSpawn # Goobstation
+    - id: FloorGoblinMidRound # Goobstation
 
 - type: entityTable
   id: BasicAntagEventsTable
@@ -198,6 +197,9 @@
     - id: ParadoxCloneSpawn
     #- id: RevenantSpawn  # GoobStation - removed till rework
     - id: SleeperAgents
+    - id: ChangelingMidround
+    - id: HereticMidround
+    - id: Devilmidround
     - id: ZombieOutbreak
     - id: LoneOpsSpawn
     - id: DerelictCyborgSpawn
@@ -207,6 +209,7 @@
     - id: BingleSpawn #Goobstation - Bingle
     - id: SlaughterDemonMidround # Goobstation - Slaughter Demon
     - id: XenomorphsInfestation # WD EDIT
+    - id: WraithMidround # Goobstation - Wraith
 
 
 - type: entity
@@ -431,6 +434,7 @@
     - Diona
     - Abductor
     - Harpy
+    - Plasmaman # EE
     # Goobstation end
   - type: AntagObjectives
     objectives:

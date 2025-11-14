@@ -158,14 +158,25 @@
   id: CaptainMantle
   equipment:
     neck: ClothingNeckMantleCap
-  effects:
-  - !type:GroupLoadoutEffect
-    proto: MasterCap
+#  effects: # Orion-Remove
+#  - !type:GroupLoadoutEffect
+#    proto: MasterCap
 
 - type: startingGear
   id: CaptainMantle
   equipment:
     neck: ClothingNeckMantleCap
+
+- type: loadout
+  id: VeteranCaptainCloak
+  equipment:
+    neck: ClothingNeckCloakVetCap
+  effects:
+  - !type:JobRequirementLoadoutEffect
+    requirement:
+      !type:RoleTimeRequirement
+      role: JobCaptain
+      time: 360000 #100 hrs
 
 # Back
 - type: loadout
