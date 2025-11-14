@@ -17,7 +17,7 @@
     - id: IonStormHermit # its a bit more frequent on hermit- not that it didnt happen every round origonaly
     - id: KudzuGrowth
     - id: MassHallucinations
-    - id: MimicVendorRule
+#    - id: MimicVendorRule # Orion-Remove
     - id: MouseMigrationHermit
     - id: PowerGridCheck
     - id: RandomSentience
@@ -32,6 +32,11 @@
     - id: DerelictCyborgSyndicateSpawnHermit # Goobstation - usually calm
     - id: MalignRiftSpawn # DeltaV
     - id: FloorGoblinSpawn # Goobstation
+    # Orion-Start
+    - id: InteQAgentInvasionHermit
+    - id: WormholesSpawnHermit
+    - id: WisdomCowSpawn
+    # Orion-End
 
 - type: entityTable
   id: HermitAntagEventsTable
@@ -57,6 +62,10 @@
     - id: SlaughterDemonMidroundHermit # Goobstation - Slaughter Demon
     - id: XenomorphsInfestationHermit # WD EDIT
     - id: WraithMidroundHermit # GHOSTS
+    # Orion-Start
+    - id: MorphInfestationHermit
+    - id: CorticalBorerInfestationHermit
+    # Orion-End
 
 - type: entity
   parent: DerelictCyborgSyndicateSpawn
