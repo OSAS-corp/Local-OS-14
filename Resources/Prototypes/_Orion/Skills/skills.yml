@@ -53,8 +53,8 @@
   color: "#fae9c1"
 
 - type: skill
-  id: Anatomy
-  skillType: Anatomy
+  id: Surgery
+  skillType: Surgery
   costs: [0, 4, 4, 8]
   color: "#b7dff0"
 
