@@ -37,6 +37,15 @@
   special:
   - !type:AddImplantSpecial
     implants: [ FreedomImplant, NutrimentPumpImplant, SpaceProofImplant ]
+  # Orion-Start
+  defaultSkills:
+    Bureaucracy: 4
+    Eva: 4
+    Piloting: 4
+    Forensics: 4
+    Combat: 4
+    Weapons: 4
+  # Orion-End
 
 - type: startingGear
   id: ConquestGear

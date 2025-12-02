@@ -78,6 +78,11 @@
   special: # Goobstation start - Librarian should speak most languages.
   - !type:AddImplantSpecial
     implants: [ LibrarianTranslatorImplant ] # Goobstation end
+  # Orion-Start
+  bonusSkillPoints: 24
+  defaultSkills:
+    Bureaucracy: 2
+  # Orion-End
 
 - type: startingGear
   id: LibrarianGear

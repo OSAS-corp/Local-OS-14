@@ -137,6 +137,14 @@
       - type: CommandStaff
       - type: Condemned
         soulOwnedNotDevil: true
+  # Orion-Start
+  bonusSkillPoints: 13
+  defaultSkills:
+    Bureaucracy: 4
+    Eva: 3
+    Piloting: 3
+    Weapons: 2
+  # Orion-End
 
 - type: startingGear
   id: NanotrasenRepresentativeGear

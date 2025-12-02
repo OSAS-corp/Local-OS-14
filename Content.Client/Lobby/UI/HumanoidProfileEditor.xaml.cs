@@ -159,6 +159,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using Content.Client._Orion.Lobby.UI;
+using Content.Client._Orion.Skills.Ui;
 using Content.Client.Guidebook;
 using Content.Client.Humanoid;
 using Content.Client.Lobby.UI.Loadouts;
@@ -195,8 +196,11 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Utility;
 using Direction = Robust.Shared.Maths.Direction;
-using Content.Goobstation.Common.CCVar; // Goob Station - Barks
-using Content.Goobstation.Common.Barks; // Goob Station - Barks
+using Content.Goobstation.Common.CCVar;
+using Content.Goobstation.Common.Barks;
+using Content.Shared._Orion.Skills;
+using Content.Shared._Orion.Skills.Prototypes;
+
 namespace Content.Client.Lobby.UI
 {
     [GenerateTypedNameReferences]
@@ -239,6 +243,7 @@ namespace Content.Client.Lobby.UI
 
         // One at a time.
         private LoadoutWindow? _loadoutWindow;
+        private SkillsWindow? _skillsWindow; // Orion
 
         private bool _exporting;
         private bool _imaging;
@@ -344,6 +349,7 @@ namespace Content.Client.Lobby.UI
 
             SaveButton.OnPressed += args =>
             {
+                RefreshSkills(); // Orion
                 Save?.Invoke();
             };
 
@@ -1252,6 +1258,73 @@ namespace Content.Client.Lobby.UI
             _loadoutWindow?.Dispose();
         }
 
+        // Orion-Start
+        public void RefreshSkills()
+        {
+            _skillsWindow?.Dispose();
+
+            if (Profile == null)
+                return;
+
+            var skillsSystem = _entManager.System<SharedSkillsSystem>();
+            foreach (var (jobId, skills) in Profile.Skills.ToList())
+            {
+                if (!_prototypeManager.TryIndex<JobPrototype>(jobId, out var jobProto))
+                    continue;
+
+                var currentSkills = skills.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+                var defaultSkills = jobProto.DefaultSkills.ToDictionary(
+                    kvp => (byte)kvp.Key,
+                    kvp => kvp.Value
+                );
+
+                var bonusPoints = jobProto.BonusSkillPoints;
+                var racialBonus = CalculateRacialBonus(Profile.Species.Id, Profile.Age);
+                var totalPoints = bonusPoints + racialBonus;
+
+                var spentPoints = CalculateSpentPoints(skillsSystem, currentSkills, defaultSkills);
+
+                if (spentPoints <= totalPoints)
+                    continue;
+
+                foreach (var (skillKey, defaultValue) in defaultSkills)
+                {
+                    Profile = Profile.WithSkill(jobId, skillKey, defaultValue);
+                }
+
+                var skillsToReset = currentSkills.Keys.Except(defaultSkills.Keys).ToList();
+                foreach (var skillKey in skillsToReset)
+                {
+                    Profile = Profile.WithSkill(jobId, skillKey, 1);
+                }
+
+                SetDirty();
+            }
+        }
+
+        private int CalculateSpentPoints(SharedSkillsSystem skillsSystem, Dictionary<byte, int> currentSkills, Dictionary<byte, int> defaultSkills)
+        {
+            var spentPoints = 0;
+            foreach (var (skillKey, currentLevel) in currentSkills)
+            {
+                if (!Enum.IsDefined(typeof(SkillType), (SkillType)skillKey))
+                    continue;
+
+                var skillType = (SkillType)skillKey;
+                var defaultLevel = defaultSkills.GetValueOrDefault(skillKey, 1);
+
+                if (currentLevel <= defaultLevel)
+                    continue;
+
+                var currentCost = skillsSystem.GetSkillTotalCost(skillType, currentLevel);
+                var defaultCost = skillsSystem.GetSkillTotalCost(skillType, defaultLevel);
+                spentPoints += currentCost - defaultCost;
+            }
+
+            return spentPoints;
+        }
+        // Orion-End
+
         /// <summary>
         /// Reloads the entire dummy entity for preview.
         /// </summary>
@@ -1320,6 +1393,7 @@ namespace Content.Client.Lobby.UI
             RefreshAntags();
             RefreshJobs();
             RefreshLoadouts();
+            RefreshSkills(); // Orion
             RefreshSpecies();
             RefreshTraits();
             RefreshFlavorText();
@@ -1515,6 +1589,17 @@ namespace Content.Client.Lobby.UI
                         Margin = new Thickness(3f, 3f, 0f, 0f),
                     };
 
+                    // Orion-Start
+                    var skillsWindowBtn = new Button()
+                    {
+                        Text = Loc.GetString("skill-window"),
+                        HorizontalAlignment = HAlignment.Right,
+                        VerticalAlignment = VAlignment.Center,
+                        Margin = new Thickness(3f, 3f, 0f, 0f),
+                        ToolTip = Loc.GetString("skill-window-tooltip"),
+                    };
+                    // Orion-End
+
                     var collection = IoCManager.Instance!;
                     var protoManager = collection.Resolve<IPrototypeManager>();
 
@@ -1544,10 +1629,28 @@ namespace Content.Client.Lobby.UI
                         };
                     }
 
+                    // Orion-Start
+                    skillsWindowBtn.OnPressed += _ =>
+                    {
+                        OpenSkills(job);
+                    };
+                    // Orion-End
+
                     _jobPriorities.Add((job.ID, selector));
                     jobContainer.AddChild(selector);
-                    jobContainer.AddChild(loadoutWindowBtn);
+
+                    // Orion-Start
+                    var buttonsContainer = new BoxContainer
+                    {
+                        Orientation = LayoutOrientation.Horizontal,
+                        HorizontalAlignment = HAlignment.Right,
+                    };
+                    buttonsContainer.AddChild(loadoutWindowBtn);
+                    buttonsContainer.AddChild(skillsWindowBtn);
+
+                    jobContainer.AddChild(buttonsContainer);
                     category.AddChild(jobContainer);
+                    // Orion-End
                 }
             }
 
@@ -1612,6 +1715,61 @@ namespace Content.Client.Lobby.UI
 
             UpdateJobPriorities();
         }
+
+        // Orion-Start
+        private void OpenSkills(JobPrototype? jobProto)
+        {
+            _skillsWindow?.Dispose();
+            _skillsWindow = null;
+
+            if (jobProto == null || Profile == null)
+                return;
+
+            JobOverride = jobProto;
+
+            var currentSkills = Profile.Skills.GetValueOrDefault(jobProto.ID, new Dictionary<byte, int>());
+            var defaultSkills = jobProto.DefaultSkills.ToDictionary(
+                kvp => (byte)kvp.Key,
+                kvp => kvp.Value
+            );
+
+            var bonusPoints = jobProto.BonusSkillPoints;
+            var racialBonus = CalculateRacialBonus(Profile.Species, Profile.Age);
+            var totalPoints = bonusPoints + racialBonus;
+
+            _skillsWindow = new SkillsWindow(jobProto.ID, currentSkills, defaultSkills, totalPoints);
+            _skillsWindow.OnSkillChanged += (jobId, skillKey, newLevel) =>
+            {
+                Profile = Profile.WithSkill(jobId, skillKey, newLevel);
+                SetDirty();
+            };
+
+            _skillsWindow.OnClose += () =>
+            {
+                JobOverride = null;
+                ReloadPreview();
+            };
+
+            _skillsWindow.OpenCenteredLeft();
+            JobOverride = jobProto;
+            ReloadPreview();
+        }
+
+        private int CalculateRacialBonus(string species, int age)
+        {
+            var bonus = 0;
+            foreach (var racialBonusProto in _prototypeManager.EnumeratePrototypes<SpeciesSkillBonusPrototype>())
+            {
+                if (racialBonusProto.Species != species)
+                    continue;
+
+                bonus = racialBonusProto.GetBonusForAge(age);
+                break;
+            }
+
+            return bonus;
+        }
+        // Orion-End
 
         private void OnFlavorTextChange(string content)
         {
@@ -1828,6 +1986,10 @@ namespace Content.Client.Lobby.UI
 
             _loadoutWindow?.Dispose();
             _loadoutWindow = null;
+            // Orion-Start
+            _skillsWindow?.Dispose();
+            _skillsWindow = null;
+            // Orion-End
         }
 
         protected override void EnteredTree()
@@ -1847,6 +2009,7 @@ namespace Content.Client.Lobby.UI
         {
             Profile = Profile?.WithAge(newAge);
             ReloadPreview();
+            RefreshSkills(); // Orion
         }
 
         private void SetSex(Sex newSex)
@@ -1886,6 +2049,7 @@ namespace Content.Client.Lobby.UI
             RefreshJobs();
             // In case there's species restrictions for loadouts
             RefreshLoadouts();
+            RefreshSkills(); // Orion
             UpdateSexControls(); // update sex for new species
             UpdateSpeciesGuidebookIcon();
             ReloadPreview();

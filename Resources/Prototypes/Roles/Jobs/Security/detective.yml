@@ -91,6 +91,16 @@
   - !type:AddComponentSpecial # goobstation
     components:
       - type: SecurityStaff
+  # Orion-Start
+  bonusSkillPoints: 11
+  defaultSkills:
+    Bureaucracy: 2
+    Eva: 3
+    IT: 2
+    Forensics: 3
+    Combat: 3
+    Weapons: 2
+  # Orion-End
 
 - type: startingGear
   id: DetectiveGear

@@ -84,6 +84,7 @@ using System.Linq;
 using Content.Goobstation.Shared.CloneProjector.Clone;
 using Content.Goobstation.Shared.Clothing.Components;
 using Content.Goobstation.Shared.Clothing.Systems;
+using Content.Shared._Orion.Skills;
 using Content.Shared.Clothing.Components;
 using Content.Shared.Clothing.EntitySystems;
 using Content.Shared.Interaction.Components;
@@ -111,6 +112,7 @@ public sealed partial class CloningSystem : EntitySystem
     [Dependency] private readonly NameModifierSystem _nameMod = default!;
     [Dependency] private readonly ToggleableClothingSystem _toggleable = default!; // Goobstation
     [Dependency] private readonly SharedSealableClothingSystem _sealable = default!; // Goobstation
+    [Dependency] private readonly SharedSkillsSystem _skills = default!; // Orion
 
     /// <summary>
     ///     Spawns a clone of the given humanoid mob at the specified location or in nullspace.
@@ -149,6 +151,8 @@ public sealed partial class CloningSystem : EntitySystem
         _humanoidSystem.CloneAppearance(original, clone.Value);
 
         CloneComponents(original, clone.Value, settings);
+
+        CopySkills(original, clone.Value); // Orion
 
         // Add equipment first so that SetEntityName also renames the ID card.
         if (settings.CopyEquipment != null)
@@ -258,6 +262,16 @@ public sealed partial class CloningSystem : EntitySystem
         var cloningEv = new CloningEvent(settings, clone);
         RaiseLocalEvent(original, ref cloningEv); // used for datafields that cannot be directly copied using CopyComp
     }
+
+    // Orion-Start
+    /// <summary>
+    ///     Copies all skills from the original entity to the clone.
+    /// </summary>
+    public void CopySkills(EntityUid original, EntityUid clone)
+    {
+        _skills.CopySkills(original, clone);
+    }
+    // Orion-End
 
     /// <summary>
     ///     Copies the equipment the original has to the clone.

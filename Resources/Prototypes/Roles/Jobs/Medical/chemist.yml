@@ -83,6 +83,12 @@
     components:
     - type: SurgerySpeedModifier
       speedModifier: 1.25
+  # Orion-Start
+  bonusSkillPoints: 17
+  defaultSkills:
+    Chemistry: 3
+    Medicine: 2
+  # Orion-End
 
 - type: startingGear
   id: ChemistGear

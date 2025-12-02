@@ -1,0 +1,201 @@
+- type: speciesSkillBonus
+  id: HumanSkillBonus
+  species: Human
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 3
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: ReptilianSkillBonus
+  species: Reptilian
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 3
+    40: 3
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: DionaSkillBonus
+  species: Diona
+  ageBonuses:
+    22: 2
+    40: 2
+    80: 3
+    150: 3
+    250: 3
+    400: 5
+
+- type: speciesSkillBonus
+  id: SlimePersonSkillBonus
+  species: SlimePerson
+  ageBonuses:
+    22: 2
+    24: 2
+    30: 2
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: FelinidSkillBonus
+  species: Felinid
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 3
+    40: 2
+    55: 2
+
+- type: speciesSkillBonus
+  id: ChitinidSkillBonus
+  species: Chitinid
+  ageBonuses:
+    22: 5
+    24: 3
+    30: 3
+    40: 2
+    55: 2
+
+- type: speciesSkillBonus
+  id: VulpkaninSkillBonus
+  species: Vulpkanin
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 2
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: TajaranSkillBonus
+  species: Tajaran
+  ageBonuses:
+    22: 3
+    24: 2
+    30: 2
+    40: 2
+    55: 2
+
+- type: speciesSkillBonus
+  id: MothSkillBonus
+  species: Moth
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 3
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: ArachnidSkillBonus
+  species: Arachnid
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 2
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: FeroxiSkillBonus
+  species: Feroxi
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 3
+    40: 3
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: IPCSkillBonus
+  species: IPC
+  ageBonuses:
+    1: 5
+    18: 3
+    30: 5
+    60: 3
+
+- type: speciesSkillBonus
+  id: VoxSkillBonus
+  species: Vox
+  ageBonuses:
+    18: 4
+    22: 2
+    24: 2
+    30: 3
+    40: 3
+    55: 2
+
+- type: speciesSkillBonus
+  id: HarpySkillBonus
+  species: Harpy
+  ageBonuses:
+    18: 4
+    22: 2
+    24: 2
+    30: 3
+    40: 3
+    55: 2
+
+- type: speciesSkillBonus
+  id: OniSkillBonus
+  species: Oni
+  ageBonuses:
+    22: 5
+    24: 3
+    30: 3
+    40: 2
+    55: 2
+
+- type: speciesSkillBonus
+  id: YowieSkillBonus
+  species: Yowie
+  ageBonuses:
+    22: 2
+    24: 2
+    30: 2
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: GingerbreadSkillBonus
+  species: Gingerbread
+  ageBonuses:
+    22: 2
+    24: 2
+    30: 2
+    40: 2
+    55: 2
+    70: 2
+
+- type: speciesSkillBonus
+  id: RodentiaSkillBonus
+  species: Rodentia
+  ageBonuses:
+    22: 3
+    24: 3
+    30: 3
+    40: 2
+    55: 2
+
+- type: speciesSkillBonus
+  id: ResomiSkillBonus
+  species: Resomi
+  ageBonuses:
+    18: 4
+    22: 2
+    24: 2
+    30: 3
+    40: 3
+    55: 2

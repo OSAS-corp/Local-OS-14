@@ -124,6 +124,13 @@
   - !type:AddComponentSpecial # goobstation
     components:
       - type: SecurityStaff
+  # Orion-Start
+  bonusSkillPoints: 20
+  defaultSkills:
+    Bureaucracy: 2
+    Combat: 2
+    Weapons: 2
+  # Orion-End
 
 - type: startingGear
   id: SecurityCadetGear

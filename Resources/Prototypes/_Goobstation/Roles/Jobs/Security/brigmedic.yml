@@ -38,6 +38,15 @@
     components:
     - type: SurgerySpeedModifier
       speedModifier: 1.25 # Same as Paramedic
+  # Orion-Start
+  bonusSkillPoints: 14
+  defaultSkills:
+    Bureaucracy: 2
+    Combat: 2
+    Weapons: 2
+    Surgery: 3
+    Medicine: 3
+  # Orion-End
 
 - type: chameleonOutfit
   id: BrigmedicChameleonOutfit

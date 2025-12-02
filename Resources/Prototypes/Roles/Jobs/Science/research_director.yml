@@ -164,6 +164,14 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  # Orion-Start
+  bonusSkillPoints: 15
+  defaultSkills:
+    Bureaucracy: 2
+    IT: 2
+    ComplexDevices: 3
+    Science: 3
+  # Orion-End
 
 - type: startingGear
   id: ResearchDirectorGear

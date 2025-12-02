@@ -99,7 +99,13 @@
     components:
     - type: SurgerySpeedModifier
       speedModifier: 1.5
-
+  # Orion-Start
+  bonusSkillPoints: 10
+  defaultSkills:
+    Bureaucracy: 2
+    Surgery: 3
+    Medicine: 3
+  # Orion-End
 
 - type: startingGear
   id: DoctorGear

@@ -53,14 +53,13 @@
 using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
-using Content.Shared.Dataset;
 using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Preferences.Loadouts;
-using Content.Shared.Random.Helpers;
 using Content.Shared.Roles;
-using Content.Goobstation.Common.Barks; // Goob Station - Barks
+using Content.Goobstation.Common.Barks;
+using Content.Shared._Orion.Skills;
 using Content.Shared.Traits;
 using Robust.Shared.Collections;
 using Robust.Shared.Configuration;
@@ -258,7 +257,9 @@ namespace Content.Shared.Preferences
             HashSet<ProtoId<AntagPrototype>> antagPreferences,
             HashSet<ProtoId<TraitPrototype>> traitPreferences,
             Dictionary<string, RoleLoadout> loadouts,
-            ProtoId<BarkPrototype> barkVoice) // Goob Station - Barks
+            ProtoId<BarkPrototype> barkVoice, // Goob Station - Barks
+            Dictionary<string, Dictionary<byte, int>> skills // Orion
+            )
         {
             Name = name;
             FlavorText = flavortext;
@@ -290,6 +291,7 @@ namespace Content.Shared.Preferences
             _traitPreferences = traitPreferences;
             _loadouts = loadouts;
             BarkVoice = barkVoice; // Goob Station - Barks
+            Skills = skills; // Orion
 
             var hasHighPrority = false;
             foreach (var (key, value) in _jobPriorities)
@@ -337,7 +339,8 @@ namespace Content.Shared.Preferences
                 new HashSet<ProtoId<AntagPrototype>>(other.AntagPreferences),
                 new HashSet<ProtoId<TraitPrototype>>(other.TraitPreferences),
                 new Dictionary<string, RoleLoadout>(other.Loadouts),
-                other.BarkVoice) // Goob Station - Barks
+                other.BarkVoice, // Goob Station - Barks
+                other.Skills) // Orion
         {
         }
 
@@ -435,6 +438,10 @@ namespace Content.Shared.Preferences
                 BarkVoice = barkvoiceId, // Goob Station - Barks
             };
         }
+
+        // Orion-Start
+        [DataField] public Dictionary<string, Dictionary<byte, int>> Skills { get; set; } = new();
+        // Orion-End
 
         public HumanoidCharacterProfile WithName(string name)
         {
@@ -581,6 +588,24 @@ namespace Content.Shared.Preferences
                 _jobPriorities = dictionary
             };
         }
+
+        // Orion-Start
+        public HumanoidCharacterProfile WithSkill(string jobName, byte skillKey, int level)
+        {
+            var newSkills = new Dictionary<string, Dictionary<byte, int>>(Skills);
+            if (!newSkills.TryGetValue(jobName, out var jobSkills))
+            {
+                jobSkills = new Dictionary<byte, int>();
+                newSkills[jobName] = jobSkills;
+            }
+
+            var newJobSkills = new Dictionary<byte, int>(jobSkills);
+            newJobSkills[skillKey] = level;
+            newSkills[jobName] = newJobSkills;
+
+            return new(this) { Skills = newSkills };
+        }
+        // Orion-End
 
         public HumanoidCharacterProfile WithJobPriority(ProtoId<JobPrototype> jobId, JobPriority priority)
         {
@@ -740,6 +765,22 @@ namespace Content.Shared.Preferences
             if (NsfwOOCFlavorText != other.NsfwOOCFlavorText) return false;
             if (NsfwLinksFlavorText != other.NsfwLinksFlavorText) return false;
             if (NsfwTagsFlavorText != other.NsfwTagsFlavorText) return false;
+            if (Skills.Count != other.Skills.Count) return false;
+            foreach (var kv in Skills)
+            {
+                if (!other.Skills.TryGetValue(kv.Key, out var otherJobSkills))
+                    return false;
+
+                var jobSkills = kv.Value;
+                if (jobSkills.Count != otherJobSkills.Count)
+                    return false;
+
+                foreach (var inner in jobSkills)
+                {
+                    if (!otherJobSkills.TryGetValue(inner.Key, out var otherLevel) || otherLevel != inner.Value)
+                        return false;
+                }
+            }
             // Orion-End
             return Appearance.MemberwiseEquals(other.Appearance);
         }
@@ -1004,6 +1045,44 @@ namespace Content.Shared.Preferences
                          .Where(prototypeManager.HasIndex)
                          .ToList();
 
+            // Orion-Start
+            var validSkills = new Dictionary<string, Dictionary<byte, int>>();
+            foreach (var (jobName, jobSkillDict) in Skills)
+            {
+                var validJobSkills = new Dictionary<byte, int>();
+                foreach (var (skillByte, level) in jobSkillDict)
+                {
+                    if (Enum.IsDefined(typeof(SkillType), skillByte))
+                    {
+                        var validLevel = Math.Clamp(level, 1, 4);
+                        validJobSkills[skillByte] = validLevel;
+                    }
+                }
+
+                foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+                {
+                    var skillByte = (byte)skill;
+                    validJobSkills.TryAdd(skillByte, 1);
+                }
+
+                validSkills[jobName] = validJobSkills;
+            }
+
+            if (validSkills.Count == 0)
+            {
+                var defaultSkills = new Dictionary<byte, int>();
+                foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+                {
+                    defaultSkills[(byte)skill] = 1;
+                }
+
+                foreach (var job in _jobPriorities.Keys)
+                {
+                    validSkills[job.Id] = new Dictionary<byte, int>(defaultSkills);
+                }
+            }
+            // Orion-End
+
             Name = name;
             FlavorText = flavortext;
             // Orion-Start
@@ -1026,6 +1105,7 @@ namespace Content.Shared.Preferences
             Gender = gender;
             Appearance = appearance;
             SpawnPriority = spawnPriority;
+            Skills = validSkills; // Orion
 
             _jobPriorities.Clear();
 
@@ -1153,6 +1233,23 @@ namespace Content.Shared.Preferences
             hashCode.Add(BarkVoice); // Goob Station - Barks
             hashCode.Add((int) SpawnPriority);
             hashCode.Add((int) PreferenceUnavailable);
+            // Orion-Start
+            unchecked
+            {
+                var skillsHash = 0;
+                foreach (var jobKv in Skills.OrderBy(k => k.Key))
+                {
+                    var innerHash = 0;
+                    foreach (var sk in jobKv.Value.OrderBy(k => k.Key))
+                    {
+                        innerHash = HashCode.Combine(innerHash, sk.Key.GetHashCode(), sk.Value.GetHashCode());
+                    }
+                    skillsHash = HashCode.Combine(skillsHash, jobKv.Key.GetHashCode(), innerHash);
+                }
+                hashCode.Add(skillsHash);
+            }
+            // Orion-End
+
             return hashCode.ToHashCode();
         }
 

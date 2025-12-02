@@ -104,6 +104,13 @@
         isBlocked: true
   - !type:AddImplantSpecial # Chefs speak space italian
     implants: [ SpaceItalianTranslatorImplant ]
+  # Orion-Start
+  bonusSkillPoints: 17
+  defaultSkills:
+    Surgery: 2
+    Botany: 2
+    Cooking: 3
+  # Orion-End
 
 - type: startingGear
   id: ChefGear

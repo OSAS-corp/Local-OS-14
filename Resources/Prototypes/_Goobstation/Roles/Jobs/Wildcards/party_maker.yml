@@ -11,6 +11,7 @@
   - Service
   - Maintenance
   - Theatre
+  bonusSkillPoints: 25 # Orion
 
 - type: startingGear
   id: PartyMakerGear

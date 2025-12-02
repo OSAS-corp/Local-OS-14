@@ -90,6 +90,12 @@
   - !type:GiveItemOnHolidaySpecial
     holiday: BoxingDay
     prototype: BoxCardboard
+  # Orion-Start
+  bonusSkillPoints: 22
+  defaultSkills:
+    Bureaucracy: 2
+    Piloting: 2
+  # Orion-End
 
 - type: startingGear
   id: CargoTechGear

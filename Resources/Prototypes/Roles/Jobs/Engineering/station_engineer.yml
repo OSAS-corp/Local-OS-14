@@ -91,6 +91,17 @@
   - !type:AddComponentSpecial
     components:
     - type: EngineeringStaff
+  # Orion-Start
+  bonusSkillPoints: 8
+  defaultSkills:
+    Eva: 3
+    IT: 2
+    Atmospherics: 2
+    Construction: 3
+    Electrical: 3
+    Generators: 3
+    ComplexDevices: 2
+  # Orion-End
 
 - type: startingGear
   id: StationEngineerGear

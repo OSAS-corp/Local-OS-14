@@ -24,6 +24,13 @@
 #  - !type:AddComponentSpecial # Intentionally not command. I don't want them to ruin rev rounds.
 #    components:
 #    - type: CommandStaff
+  # Orion-Start
+  defaultSkills:
+    Bureaucracy: 3
+    Eva: 3
+    Piloting: 3
+    Weapons: 2
+  # Orion-End
 
 - type: startingGear
   id: NanotrasenCareerTrainerGear

@@ -70,6 +70,11 @@
   - !type:GiveItemOnHolidaySpecial
     holiday: BoxingDay
     prototype: ClothingHandsGlovesBoxingRigged
+  # Orion-Start
+  bonusSkillPoints: 21
+  defaultSkills:
+    Combat: 3
+  # Orion-End
 
 - type: startingGear
   id: BoxerGear

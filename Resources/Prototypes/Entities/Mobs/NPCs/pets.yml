@@ -1136,6 +1136,11 @@
     - Monkey
     - Kobold
     - TauCetiBasic
+  # Orion-Start
+  - type: InitialSkills
+    initialSkills:
+      Mixology: 3
+  # Orion-End
 
 - type: entity
   name: Tropico

@@ -66,6 +66,11 @@
   access:
   - Research
   - Maintenance
+  # Orion-Start
+  bonusSkillPoints: 23
+  defaultSkills:
+    Science: 2
+  # Orion-End
 
 - type: startingGear
   id: ResearchAssistantGear

@@ -138,6 +138,7 @@
     - type: MimePowers
       preventWriting: true
     - type: FrenchAccent
+  bonusSkillPoints: 25 # Orion
 
 - type: startingGear
   id: MimeGear

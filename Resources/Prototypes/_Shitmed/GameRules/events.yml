@@ -96,6 +96,31 @@
       - type: Sanitized
       - type: SurgerySpeedModifier
         speedModifier: 1.5
+      # Orion-Start
+      - type: InitialSkills
+        initialSkills:
+          Eva: 3
+          Piloting: 4
+          Combat: 2
+          Surgery: 4
+          Medicine: 4
+        randomSkills:
+        - Bureaucracy
+        - MechPiloting
+        - IT
+        - Atmospherics
+        - Construction
+        - Electrical
+        - Generators
+        - Chemistry
+        - ComplexDevices
+        - Science
+        - Forensics
+        - Weapons
+        - Botany
+        - Cooking
+        - Mixology
+      # Orion-End
       mindRoles:
       - MindRoleLoneAbductor
 
@@ -195,6 +220,31 @@
       - type: Sanitized
       - type: SurgerySpeedModifier
         speedModifier: 1.5
+      # Orion-Start
+      - type: InitialSkills
+        initialSkills:
+          Eva: 3
+          Piloting: 4
+          Combat: 2
+          Surgery: 4
+          Medicine: 4
+        randomSkills:
+        - Bureaucracy
+        - MechPiloting
+        - IT
+        - Atmospherics
+        - Construction
+        - Electrical
+        - Generators
+        - Chemistry
+        - ComplexDevices
+        - Science
+        - Forensics
+        - Weapons
+        - Botany
+        - Cooking
+        - Mixology
+      # Orion-End
       mindRoles:
       - MindRoleAbductorScientist
     - spawnerPrototype: AbductorAgentSpawner

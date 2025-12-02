@@ -1,0 +1,37 @@
+using Content.Shared.Humanoid.Prototypes;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
+
+namespace Content.Shared._Orion.Skills.Prototypes;
+
+//
+// License-Identifier: GPL-3.0-or-later
+//
+
+[Prototype("speciesSkillBonus")]
+public sealed partial class SpeciesSkillBonusPrototype : IPrototype
+{
+    [IdDataField]
+    public string ID { get; private set; } = default!;
+
+    [DataField(customTypeSerializer: typeof(PrototypeIdSerializer<SpeciesPrototype>), required: true)]
+    public string Species { get; private set; } = default!;
+
+    [DataField]
+    public Dictionary<int, int> AgeBonuses { get; private set; } = new();
+
+    public int GetBonusForAge(int age)
+    {
+        if (AgeBonuses.Count == 0)
+            return 0;
+
+        var maxBonus = 0;
+        foreach (var (bonusAge, bonus) in AgeBonuses)
+        {
+            if (bonusAge <= age)
+                maxBonus += bonus;
+        }
+
+        return maxBonus;
+    }
+}

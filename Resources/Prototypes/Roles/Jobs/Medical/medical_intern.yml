@@ -81,6 +81,12 @@
     components:
     - type: SurgerySpeedModifier
       speedModifier: 1.25
+  # Orion-Start
+  bonusSkillPoints: 19
+  defaultSkills:
+    Surgery: 2
+    Medicine: 2
+  # Orion-End
 
 - type: startingGear
   id: MedicalInternGear

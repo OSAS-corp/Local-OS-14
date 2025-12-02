@@ -236,7 +236,29 @@
         - NamesMilitaryFirstLeader
         - NamesMilitaryLast
       nameFormat: name-format-ert
-
+    # Orion-Start
+    - type: InitialSkills
+      randomMaxLevel: 3
+      initialSkills:
+        Bureaucracy: 4
+        Eva: 3
+        Piloting: 4
+        MechPiloting: 3
+        IT: 4
+        Atmospherics: 4
+        Construction: 4
+        Electrical: 4
+        Generators: 4
+        Surgery: 4
+        Chemistry: 4
+        Medicine: 4
+        ComplexDevices: 4
+        Science: 4
+        Forensics: 4
+        Combat: 4
+        Weapons: 4
+      randomSkills: [Botany, Cooking, Mixology]
+      # Orion-End
 
 ## ERT Leader
 
@@ -284,6 +306,29 @@
       - NamesMilitaryFirstLeader
       - NamesMilitaryLast
       nameFormat: name-format-ert
+    # Orion-Start
+    - type: InitialSkills
+      randomMaxLevel: 3
+      initialSkills:
+        Bureaucracy: 3
+        Eva: 3
+        Piloting: 4
+        MechPiloting: 3
+        IT: 3
+        Atmospherics: 2
+        Construction: 2
+        Electrical: 2
+        Generators: 2
+        Surgery: 2
+        Chemistry: 2
+        Medicine: 3
+        ComplexDevices: 2
+        Science: 2
+        Forensics: 3
+        Combat: 4
+        Weapons: 4
+      randomSkills: [Botany, Cooking, Mixology]
+      # Orion-End
 
 - type: entity
   id: RandomHumanoidSpawnerERTLeaderEVA
@@ -417,6 +462,29 @@
     - type: Loadout
       prototypes: [ ERTJanitorGear ]
       roleLoadout: [ RoleSurvivalExtended ]
+    # Orion-Start
+    - type: InitialSkills
+      randomMaxLevel: 3
+      initialSkills:
+        Bureaucracy: 3
+        Eva: 3
+        Piloting: 3
+        MechPiloting: 3
+        IT: 2
+        Atmospherics: 2
+        Construction: 2
+        Electrical: 2
+        Generators: 2
+        Surgery: 2
+        Chemistry: 3
+        Medicine: 3
+        ComplexDevices: 2
+        Science: 2
+        Forensics: 3
+        Combat: 4
+        Weapons: 4
+      randomSkills: [Botany, Cooking, Mixology]
+      # Orion-End
 
 - type: entity
   id: RandomHumanoidSpawnerERTJanitorEVA
@@ -490,6 +558,29 @@
     - type: Loadout
       prototypes: [ ERTEngineerGear ]
       roleLoadout: [ RoleSurvivalExtended ]
+    # Orion-Start
+    - type: InitialSkills
+      randomMaxLevel: 3
+      initialSkills:
+        Bureaucracy: 3
+        Eva: 3
+        Piloting: 4
+        MechPiloting: 3
+        IT: 4
+        Atmospherics: 4
+        Construction: 4
+        Electrical: 4
+        Generators: 4
+        Surgery: 2
+        Chemistry: 2
+        Medicine: 3
+        ComplexDevices: 4
+        Science: 2
+        Forensics: 3
+        Combat: 4
+        Weapons: 4
+      randomSkills: [Botany, Cooking, Mixology]
+      # Orion-End
 
 - type: entity
   id: RandomHumanoidSpawnerERTEngineerEVA
@@ -558,6 +649,29 @@
       roleLoadout: [ RoleSurvivalExtended ]
     - type: AutoImplant
       implants: [ FreedomImplant, RadioImplantCentcomm, NutrimentPumpImplant, StypticStimulatorImplant ] # Goobstation
+    # Orion-Start
+    - type: InitialSkills
+      randomMaxLevel: 3
+      initialSkills:
+        Bureaucracy: 3
+        Eva: 3
+        Piloting: 3
+        MechPiloting: 3
+        IT: 3
+        Atmospherics: 2
+        Construction: 2
+        Electrical: 2
+        Generators: 2
+        Surgery: 2
+        Chemistry: 2
+        Medicine: 3
+        ComplexDevices: 2
+        Science: 2
+        Forensics: 3
+        Combat: 4
+        Weapons: 4
+      randomSkills: [Botany, Cooking, Mixology]
+      # Orion-End
 
 - type: entity
   id: RandomHumanoidSpawnerERTSecurityEVA
@@ -652,6 +766,29 @@
       roleLoadout: [ RoleSurvivalExtended ]
     - type: AutoImplant
       implants: [ FreedomImplant, RadioImplantCentcomm, NutrimentPumpImplant, StypticStimulatorImplant ] # Goobstation
+    # Orion-Start
+    - type: InitialSkills
+      randomMaxLevel: 3
+      initialSkills:
+        Bureaucracy: 3
+        Eva: 3
+        Piloting: 3
+        MechPiloting: 3
+        IT: 2
+        Atmospherics: 2
+        Construction: 2
+        Electrical: 2
+        Generators: 2
+        Surgery: 4
+        Chemistry: 4
+        Medicine: 4
+        ComplexDevices: 2
+        Science: 2
+        Forensics: 3
+        Combat: 4
+        Weapons: 4
+      randomSkills: [Botany, Cooking, Mixology]
+      # Orion-End
 
 - type: entity
   id: RandomHumanoidSpawnerERTMedicalEVA

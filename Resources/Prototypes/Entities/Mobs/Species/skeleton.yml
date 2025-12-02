@@ -161,6 +161,10 @@
   - type: FireVisuals
     alternateState: Standing
   - type: FlashImmunity
+  # Orion-Start
+  - type: InitialSkills
+    randomizeAllSkills: true
+  # Orion-End
   - type: Inventory
     femaleDisplacements:
       jumpsuit:

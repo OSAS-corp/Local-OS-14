@@ -84,6 +84,16 @@
   - !type:AddComponentSpecial # Goobstation
     components:
     - type: EngineeringStaff
+  # Orion-Start
+  bonusSkillPoints: 8
+  defaultSkills:
+    Eva: 3
+    IT: 3
+    Atmospherics: 2
+    Construction: 3
+    Electrical: 3
+    Generators: 3
+  # Orion-End
 
 - type: startingGear
   id: AtmosphericTechnicianGear

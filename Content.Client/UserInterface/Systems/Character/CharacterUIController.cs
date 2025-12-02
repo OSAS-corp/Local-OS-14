@@ -25,6 +25,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Linq;
+using Content.Client._Orion.Notes;
+using Content.Client._Orion.Skills.Ui;
 using Content.Client.CharacterInfo;
 using Content.Client.Gameplay;
 using Content.Client.Stylesheets;
@@ -32,6 +34,9 @@ using Content.Client.UserInterface.Controls;
 using Content.Client.UserInterface.Systems.Character.Controls;
 using Content.Client.UserInterface.Systems.Character.Windows;
 using Content.Client.UserInterface.Systems.Objectives.Controls;
+using Content.Shared._Orion.Skills;
+using Content.Shared._Orion.Skills.Components;
+using Content.Shared._Orion.Skills.Events;
 using Content.Shared.Input;
 using Content.Shared.Mind;
 using Content.Shared.Mind.Components;
@@ -56,6 +61,8 @@ public sealed class CharacterUIController : UIController, IOnStateEntered<Gamepl
     [Dependency] private readonly IEntityManager _ent = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
+    [Dependency] private readonly IEntityNetworkManager _entityNetworkManager = default!; // Orion
+    [Dependency] private readonly NotesTextUIController _notesText = default!; // Orion
 
     [UISystemDependency] private readonly CharacterInfoSystem _characterInfo = default!;
     [UISystemDependency] private readonly SpriteSystem _sprite = default!;
@@ -68,6 +75,7 @@ public sealed class CharacterUIController : UIController, IOnStateEntered<Gamepl
     }
 
     private CharacterWindow? _window;
+    private SkillsWindow? _skillsWindow; // Orion
     private MenuButton? CharacterButton => UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.CharacterButton;
 
     public void OnStateEntered(GameplayState state)
@@ -79,6 +87,17 @@ public sealed class CharacterUIController : UIController, IOnStateEntered<Gamepl
 
         _window.OnClose += DeactivateButton;
         _window.OnOpen += ActivateButton;
+
+        // Orion-Start
+        _window.SkillsButton.OnPressed += OnSkillsButtonPressed;
+        if (_player.LocalEntity.HasValue && _ent.HasComponent<SkillsComponent>(_player.LocalEntity))
+            _window.SkillsButton.Disabled = false;
+
+        _window.NotesTextButton.OnPressed += _ =>
+        {
+            _notesText.OpenWindow();
+        };
+        // Orion-End
 
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.OpenCharacterMenu,
@@ -281,4 +300,57 @@ public sealed class CharacterUIController : UIController, IOnStateEntered<Gamepl
             _window.Open();
         }
     }
+
+    // Orion-Start
+    private void OnSkillsButtonPressed(ButtonEventArgs args)
+    {
+        OpenSkillsWindow();
+    }
+
+    private void OpenSkillsWindow()
+    {
+        if (_player.LocalEntity is not { } entity)
+            return;
+
+        if (_skillsWindow != null)
+        {
+            _skillsWindow.Close();
+            _skillsWindow = null;
+        }
+
+        var skillsSystem = _ent.System<SharedSkillsSystem>();
+        if (!_ent.TryGetComponent<SkillsComponent>(entity, out var skillsComp))
+            return;
+
+        var jobId = skillsComp.CurrentJob;
+        var defaultSkills = skillsSystem.GetDefaultSkillsForJob(jobId);
+        var totalPoints = skillsSystem.GetTotalPoints(entity, jobId, skillsComp);
+        var currentSkills = skillsComp.Skills.ToDictionary(
+            kvp => (byte)kvp.Key,
+            kvp => kvp.Value
+        );
+
+        var skillsWindow = new SkillsWindow(
+            jobId ?? "unknown",
+            currentSkills,
+            defaultSkills,
+            totalPoints,
+            true
+        );
+
+        _skillsWindow = skillsWindow;
+
+        skillsWindow.OnSkillChanged += (changedJobId, skillKey, newLevel) =>
+        {
+            if (_player.LocalEntity is not { } localEntity)
+                return;
+
+            var skillType = (SkillType)skillKey;
+            var ev = new SelectSkillPressedEvent(_ent.GetNetEntity(localEntity), skillType, newLevel, changedJobId);
+            _entityNetworkManager.SendSystemNetworkMessage(ev);
+        };
+
+        skillsWindow.OpenCentered();
+    }
+    // Orion-End
 }

@@ -39,6 +39,31 @@
     - OldFastCodes
   - type: GlobalAntagonist # Orion
     antagonistPrototype: globalAntagonistInteQ
+  # Orion-Start
+  - type: InitialSkills
+    initialSkills:
+      Eva: 3
+      Piloting: 3
+      MechPiloting: 3
+      Construction: 3
+      Electrical: 3
+      Generators: 3
+      Combat: 4
+      Weapons: 4
+    randomSkills:
+      - Bureaucracy
+      - IT
+      - Atmospherics
+      - Chemistry
+      - ComplexDevices
+      - Anatomy
+      - Medicine
+      - Science
+      - Forensics
+      - Botany
+      - Cooking
+      - Mixology
+  # Orion-End
 
 - type: randomHumanoidSettings
   parent: InteQVanguard
@@ -56,6 +81,31 @@
     - InteQVanguardLeaderNamesPrefix
     - NamesMilitaryLast
     nameFormat: name-format-standard
+  # Orion-Start
+  - type: InitialSkills
+    initialSkills:
+      Eva: 3
+      Piloting: 3
+      MechPiloting: 3
+      Construction: 3
+      Electrical: 3
+      Generators: 3
+      Combat: 4
+      Weapons: 4
+      Bureaucracy: 4
+    randomSkills:
+    - IT
+    - Atmospherics
+    - Chemistry
+    - ComplexDevices
+    - Anatomy
+    - Medicine
+    - Science
+    - Forensics
+    - Botany
+    - Cooking
+    - Mixology
+  # Orion-End
 
 - type: randomHumanoidSettings
   parent: InteQVanguard
@@ -89,6 +139,31 @@
     rules: ghost-role-information-rules-team-antagonist
   - type: Loadout
     prototypes: [ InteQVanguardMedicGear ]
+  # Orion-Start
+  - type: InitialSkills
+    initialSkills:
+      Eva: 3
+      Piloting: 3
+      MechPiloting: 3
+      Construction: 3
+      Electrical: 3
+      Generators: 3
+      Combat: 4
+      Weapons: 4
+      Medicine: 4
+      Surgery: 3
+      Chemistry: 4
+    randomSkills:
+    - Bureaucracy
+    - IT
+    - Atmospherics
+    - ComplexDevices
+    - Science
+    - Forensics
+    - Botany
+    - Cooking
+    - Mixology
+  # Orion-End
 
 # Spawners
 - type: entity

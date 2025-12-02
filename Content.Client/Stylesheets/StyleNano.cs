@@ -1971,6 +1971,53 @@ namespace Content.Client.Stylesheets
                     .Prop(Label.StylePropertyFont, notoSans8),
                 // ---
 
+                // Orion-Start
+                Element<Button>()
+                    .Class("SkillLevelDefault")
+                    .Pseudo(ContainerButton.StylePseudoClassNormal)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#3E6C45")),
+
+                Element<Button>()
+                    .Class("SkillLevelDefaultHover")
+                    .Pseudo(ContainerButton.StylePseudoClassHover)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#4E7C55")),
+
+                Element<Button>()
+                    .Class("SkillLevelDefaultPressed")
+                    .Pseudo(ContainerButton.StylePseudoClassPressed)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#2E5C35")),
+
+                Element<Button>()
+                    .Class("SkillLevelUpgraded")
+                    .Pseudo(ContainerButton.StylePseudoClassNormal)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#9051A8")),
+
+                Element<Button>()
+                    .Class("SkillLevelUpgradedHover")
+                    .Pseudo(ContainerButton.StylePseudoClassHover)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#A061B8")),
+
+                Element<Button>()
+                    .Class("SkillLevelUpgradedPressed")
+                    .Pseudo(ContainerButton.StylePseudoClassPressed)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#804198")),
+
+                Element<Button>()
+                    .Class("SkillLevelNormal")
+                    .Pseudo(ContainerButton.StylePseudoClassNormal)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#353535")),
+
+                Element<Button>()
+                    .Class("SkillLevelNormalHover")
+                    .Pseudo(ContainerButton.StylePseudoClassHover)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#454545")),
+
+                Element<Button>()
+                    .Class("SkillLevelNormalPressed")
+                    .Pseudo(ContainerButton.StylePseudoClassPressed)
+                    .Prop(Control.StylePropertyModulateSelf, Color.FromHex("#252525")),
+                // Orion-End
+
                 Element<Label>().Class("StatusFieldTitle")
                     .Prop("font-color", NanoGold),
 

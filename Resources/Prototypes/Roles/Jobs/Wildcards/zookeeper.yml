@@ -70,6 +70,12 @@
   - !type:GiveItemOnHolidaySpecial
     holiday: MonkeyDay
     prototype: MonkeyCubeBox
+  # Orion-Start
+  bonusSkillPoints: 19
+  defaultSkills:
+    Surgery: 2
+    Medicine: 2
+  # Orion-End
 
 - type: startingGear
   id: ZookeeperGear

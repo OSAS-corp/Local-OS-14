@@ -87,6 +87,7 @@
   goobcoins: 20 #Goob content
   access:
   - Maintenance
+  bonusSkillPoints: 25 # Orion
 
 - type: startingGear
   id: PassengerGear

@@ -96,6 +96,14 @@
   special: # goob
   - !type:AddImplantSpecial # Service workers can understand a chef's communications.
     implants: [ BasicSpaceItalianTranslatorImplant ]
+  # Orion-Start
+  bonusSkillPoints: 20
+  defaultSkills:
+    Chemistry: 2
+    Botany: 2
+    Cooking: 2
+    Mixology: 3
+  # Orion-End
 
 - type: startingGear
   id: ServiceWorkerGear

@@ -65,6 +65,12 @@
   access:
   - Service
   - Maintenance
+  # Orion-Start
+  bonusSkillPoints: 23
+  defaultSkills:
+    Bureaucracy: 2
+    IT: 2
+  # Orion-End
 
 - type: startingGear
   id: ReporterGear

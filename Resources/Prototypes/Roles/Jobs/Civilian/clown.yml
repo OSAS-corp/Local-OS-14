@@ -149,6 +149,7 @@
       interval: 10
   - !type:AddImplantSpecial
     implants: [ SadTromboneImplant ]
+  bonusSkillPoints: 25 # Orion
 
 - type: startingGear
   id: ClownGear

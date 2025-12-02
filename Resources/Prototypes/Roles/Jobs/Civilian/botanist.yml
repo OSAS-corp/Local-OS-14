@@ -81,6 +81,13 @@
   - !type:GiveItemOnHolidaySpecial
     holiday: FourTwenty
     prototype: CannabisSeeds
+  # Orion-Start
+  bonusSkillPoints: 18
+  defaultSkills:
+    Chemistry: 2
+    Science: 2
+    Botany: 3
+  # Orion-End
 
 - type: startingGear
   id: BotanistGear

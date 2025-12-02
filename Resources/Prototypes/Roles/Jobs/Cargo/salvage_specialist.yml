@@ -86,6 +86,16 @@
   - Salvage
   - Maintenance
   - External
+  # Orion-Start
+  bonusSkillPoints: 14
+  defaultSkills:
+    Eva: 3
+    Piloting: 2
+    Construction: 2
+    Medicine: 2
+    Science: 2
+    Combat: 2
+  # Orion-End
 
 - type: startingGear
   id: SalvageSpecialistGear

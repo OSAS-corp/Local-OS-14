@@ -162,6 +162,13 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  # Orion-Start
+  bonusSkillPoints: 18
+  defaultSkills:
+    Bureaucracy: 3
+    Eva: 3
+    Piloting: 2
+  # Orion-End
 
 - type: startingGear
   id: QuartermasterGear

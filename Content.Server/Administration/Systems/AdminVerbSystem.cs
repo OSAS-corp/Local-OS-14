@@ -141,7 +141,6 @@ using Content.Shared.Configurable;
 using Content.Shared.Database;
 using Content.Shared.Examine;
 using Content.Shared.GameTicking;
-using Content.Shared.Hands.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Mind.Components;
 using Content.Shared.Movement.Components;
@@ -161,6 +160,8 @@ using Robust.Shared.Timing;
 using Robust.Shared.Toolshed;
 using Robust.Shared.Utility;
 using System.Linq;
+using Content.Server._Orion.Administration.UI;
+using Content.Shared._Orion.Skills.Components;
 using static Content.Shared.Configurable.ConfigurationComponent;
 
 namespace Content.Server.Administration.Systems
@@ -695,6 +696,26 @@ namespace Content.Server.Administration.Systems
                 };
                 args.Verbs.Add(verb);
             }
+
+            // Orion-Start
+            // Skills Management Verb
+            if (_adminManager.HasAdminFlag(player, AdminFlags.Admin) && EntityManager.HasComponent<SkillsComponent>(args.Target))
+            {
+                args.Verbs.Add(new Verb
+                {
+                    Text = Loc.GetString("skills-admin-verb-manage"),
+                    Category = VerbCategory.Admin,
+                    Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/settings.svg.192dpi.png")),
+                    Act = () =>
+                    {
+                        var eui = new SkillsAdminEui(args.Target);
+                        _euiManager.OpenEui(eui, player);
+                        eui.StateDirty();
+                    },
+                    Impact = LogImpact.Medium
+                });
+            }
+            // Orion-End
         }
 
         #region SolutionsEui

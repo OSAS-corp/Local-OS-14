@@ -191,6 +191,12 @@
   - !type:AddComponentSpecial
     components:
       - type: CommandStaff
+  # Orion-Start
+  bonusSkillPoints: 21
+  defaultSkills:
+    Bureaucracy: 3
+    IT: 2
+  # Orion-End
 
 - type: startingGear
   id: HoPGear

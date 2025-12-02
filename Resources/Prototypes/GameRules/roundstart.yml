@@ -283,6 +283,26 @@
       - type: NpcFactionMember
         factions:
         - Syndicate
+      # Orion-Start
+      - type: InitialSkills
+        initialSkills:
+          Bureaucracy: 3
+          Eva: 3
+          Piloting: 4
+          MechPiloting: 3
+          IT: 3
+          Atmospherics: 3
+          Construction: 4
+          Electrical: 4
+          Generators: 3
+          Surgery: 3
+          Chemistry: 3
+          Medicine: 3
+          ComplexDevices: 4
+          Science: 2
+          Combat: 4
+          Weapons: 4
+      # Orion-End
       mindRoles:
       - MindRoleNukeopsCommander
     - prefRoles: [ NukeopsMedic ]
@@ -311,6 +331,26 @@
         - Syndicate
       - type: SurgerySpeedModifier # shitmed
         speedModifier: 2
+      # Orion-Start
+      - type: InitialSkills
+        initialSkills:
+          Bureaucracy: 3
+          Eva: 3
+          Piloting: 4
+          MechPiloting: 3
+          IT: 3
+          Atmospherics: 3
+          Construction: 4
+          Electrical: 4
+          Generators: 3
+          Surgery: 3
+          Chemistry: 3
+          Medicine: 3
+          ComplexDevices: 4
+          Science: 2
+          Combat: 4
+          Weapons: 4
+      # Orion-End
       mindRoles:
       - MindRoleNukeopsMedic
     - prefRoles: [ Nukeops ]
@@ -339,6 +379,26 @@
       - type: NpcFactionMember
         factions:
         - Syndicate
+      # Orion-Start
+      - type: InitialSkills
+        initialSkills:
+          Bureaucracy: 3
+          Eva: 3
+          Piloting: 4
+          MechPiloting: 3
+          IT: 3
+          Atmospherics: 3
+          Construction: 4
+          Electrical: 4
+          Generators: 3
+          Surgery: 3
+          Chemistry: 3
+          Medicine: 3
+          ComplexDevices: 4
+          Science: 2
+          Combat: 4
+          Weapons: 4
+      # Orion-End
       mindRoles:
       - MindRoleNukeops
 
@@ -405,6 +465,33 @@
       lateJoinAdditional: true
       mindRoles:
       - MindRoleTraitor
+      # Orion-Start
+      components:
+      - type: InitialSkills
+        overrideExisting: false
+        initialSkills:
+          Eva: 3
+          MechPiloting: 3
+        addSkills:
+          Bureaucracy: 1
+          Piloting: 1
+          IT: 1
+          Atmospherics: 1
+          Construction: 1
+          Electrical: 1
+          Generators: 1
+          Surgery: 1
+          Chemistry: 1
+          Medicine: 1
+          ComplexDevices: 1
+          Science: 1
+          Forensics: 1
+          Combat: 1
+          Weapons: 1
+          Botany: 1
+          Cooking: 1
+          Mixology: 1
+      # Orion-End
 
 - type: entity
   id: Revolutionary
@@ -432,6 +519,32 @@
       components:
       - type: Revolutionary
       - type: HeadRevolutionary
+      # Orion-Start
+      - type: InitialSkills
+        overrideExisting: false
+        initialSkills:
+          Eva: 3
+          MechPiloting: 3
+        addSkills:
+          Bureaucracy: 1
+          Piloting: 1
+          IT: 1
+          Atmospherics: 1
+          Construction: 1
+          Electrical: 1
+          Generators: 1
+          Surgery: 1
+          Chemistry: 1
+          Medicine: 1
+          ComplexDevices: 1
+          Science: 1
+          Forensics: 1
+          Combat: 1
+          Weapons: 1
+          Botany: 1
+          Cooking: 1
+          Mixology: 1
+      # Orion-End
       mindRoles:
       - MindRoleHeadRevolutionary
 

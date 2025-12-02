@@ -166,6 +166,18 @@
     components:
       - type: CommandStaff
       - type: EngineeringStaff # Goobstation
+  # Orion-Start
+  bonusSkillPoints: 4
+  defaultSkills:
+    Bureaucracy: 2
+    Eva: 3
+    IT: 3
+    Atmospherics: 3
+    Construction: 3
+    Electrical: 3
+    Generators: 3
+    ComplexDevices: 2
+  # Orion-End
 
 - type: startingGear
   id: ChiefEngineerGear

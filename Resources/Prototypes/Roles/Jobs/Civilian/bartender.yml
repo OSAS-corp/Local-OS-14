@@ -86,6 +86,14 @@
   extendedAccess:
   - Kitchen
   - Hydroponics
+  # Orion-Start
+  bonusSkillPoints: 17
+  defaultSkills:
+    Chemistry: 2
+    Weapons: 2
+    Botany: 2
+    Mixology: 3
+  # Orion-End
 
 - type: startingGear
   id: BartenderGear

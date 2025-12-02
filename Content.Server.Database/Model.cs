@@ -144,6 +144,8 @@ using System.Net;
 using System.Text.Json;
 using Content.Shared.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NpgsqlTypes;
 
 namespace Content.Server.Database
@@ -181,6 +183,7 @@ namespace Content.Server.Database
         public DbSet<RoleWhitelist> RoleWhitelists { get; set; } = null!;
         public DbSet<BanTemplate> BanTemplate { get; set; } = null!;
         public DbSet<IPIntelCache> IPIntelCache { get; set; } = null!;
+        public DbSet<ProfileJobSkills> ProfileJobSkills { get; set; } = null!; // Orion
 
         // RMC14
         public DbSet<RMCDiscordAccount> RMCDiscordAccounts { get; set; } = default!;
@@ -239,6 +242,32 @@ namespace Content.Server.Database
             modelBuilder.Entity<Job>()
                 .HasIndex(j => new { j.ProfileId, j.JobName })
                 .IsUnique();
+
+            // Orion-Start
+            modelBuilder.Entity<ProfileJobSkills>(entity =>
+            {
+                var converter = new ValueConverter<Dictionary<byte, int>, string>(
+                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
+                    v => JsonSerializer.Deserialize<Dictionary<byte, int>>(v, (JsonSerializerOptions)null!) ?? new());
+
+                var comparer = new ValueComparer<Dictionary<byte, int>>(
+                    (l, r) => l != null && r != null && l.SequenceEqual(r),
+                    v => v.Aggregate(0, (a, p) => HashCode.Combine(a, p.Key.GetHashCode(), p.Value.GetHashCode())),
+                    v => v.ToDictionary(kv => kv.Key, kv => kv.Value));
+
+                entity.Property(e => e.Skills)
+                    .HasConversion(converter)
+                    .Metadata.SetValueComparer(comparer);
+
+                entity.HasIndex(p => new { p.ProfileId, p.JobName })
+                    .IsUnique();
+
+                entity.HasOne(e => e.Profile)
+                    .WithMany(e => e.JobSkills)
+                    .HasForeignKey(e => e.ProfileId)
+                    .IsRequired();
+            });
+            // Orion-End
 
             modelBuilder.Entity<AssignedUserId>()
                 .HasIndex(p => p.UserName)
@@ -634,6 +663,7 @@ namespace Content.Server.Database
         public List<Job> Jobs { get; } = new();
         public List<Antag> Antags { get; } = new();
         public List<Trait> Traits { get; } = new();
+        public List<ProfileJobSkills> JobSkills { get; } = new(); // Orion
 
         public List<ProfileRoleLoadout> Loadouts { get; } = new();
 
@@ -758,6 +788,26 @@ namespace Content.Server.Database
     }
 
     #endregion
+
+    // Orion-Start
+    #region Job Skills
+
+    public class ProfileJobSkills
+    {
+        public int Id { get; set; }
+
+        public int ProfileId { get; set; }
+
+        public Profile Profile { get; set; } = null!;
+
+        public string JobName { get; set; } = string.Empty;
+
+        [Column(TypeName = "jsonb")]
+        public Dictionary<byte, int> Skills { get; set; } = new();
+    }
+
+    #endregion
+    // Orion-End
 
     public enum DbPreferenceUnavailableMode
     {

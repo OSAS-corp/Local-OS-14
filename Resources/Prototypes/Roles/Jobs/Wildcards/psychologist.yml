@@ -112,6 +112,13 @@
   - Maintenance
 #  extendedAccess: # Orion-Edit
 #  - Chemistry
+  # Orion-Start
+  bonusSkillPoints: 20
+  defaultSkills:
+    Bureaucracy: 2
+    Chemistry: 2
+    Combat: 2
+  # Orion-End
 
 - type: startingGear
   id: PsychologistGear

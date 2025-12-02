@@ -171,6 +171,14 @@
     components:
     - type: SurgerySpeedModifier
       speedModifier: 2
+  # Orion-Start
+  bonusSkillPoints: 8
+  defaultSkills:
+    Bureaucracy: 2
+    Surgery: 3
+    Chemistry: 2
+    Medicine: 3
+  # Orion-End
 
 - type: startingGear
   id: CMOGear

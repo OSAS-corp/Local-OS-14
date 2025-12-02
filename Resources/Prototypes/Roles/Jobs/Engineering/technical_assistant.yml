@@ -81,6 +81,15 @@
   - !type:AddComponentSpecial
     components:
     - type: EngineeringStaff
+  # Orion-Start
+  bonusSkillPoints: 18
+  defaultSkills:
+    IT: 2
+    Atmospherics: 2
+    Construction: 2
+    Electrical: 2
+    Generators: 2
+  # Orion-End
 
 - type: startingGear
   id: TechnicalAssistantGear

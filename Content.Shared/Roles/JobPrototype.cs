@@ -96,6 +96,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+using Content.Shared._Orion.Skills;
 using Content.Shared.Access;
 using Content.Shared.Guidebook;
 using Content.Shared.Players.PlayTimeTracking;
@@ -132,6 +133,14 @@ namespace Content.Shared.Roles
 
         [ViewVariables(VVAccess.ReadOnly)]
         public string LocalizedName => Loc.GetString(Name);
+
+        // Orion-Start
+        [DataField("defaultSkills")]
+        public Dictionary<SkillType, int> DefaultSkills { get; private set; } = new();
+
+        [DataField("bonusSkillPoints")]
+        public int BonusSkillPoints { get; private set; }
+        // Orion-End
 
         /// <summary>
         ///     The name of this job as displayed to players.
