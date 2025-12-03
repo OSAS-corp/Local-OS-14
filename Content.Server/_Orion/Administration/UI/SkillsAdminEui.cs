@@ -1,8 +1,8 @@
-using System.Linq;
 using Content.Server.EUI;
 using Content.Server.Prayer;
 using Content.Shared._Orion.Skills;
 using Content.Shared._Orion.Skills.Components;
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared._Orion.Skills.Ui;
 using Content.Shared.Eui;
 using Robust.Shared.Player;
@@ -39,15 +39,12 @@ public sealed class SkillsAdminEui : BaseEui
         if (_skillsComp == null)
             return new SkillsAdminEuiState(false, new(), 0, 0, "", GetEntityName(_targetEntity));
 
-        var currentSkills = _skillsComp.Skills.ToDictionary(
-            kvp => (byte)kvp.Key,
-            kvp => kvp.Value
-        );
+        var currentSkills = new Dictionary<ProtoId<SkillPrototype>, int>(_skillsComp.Skills);
 
         var defaultSkills = _skillsSystem.GetDefaultSkillsForJob(_skillsComp.CurrentJob);
 
         var jobName = Loc.GetString("skills-admin-skills-no-job");
-        if (_proto.TryIndex(_skillsComp.CurrentJob, out var jobPrototype))
+        if (_skillsComp.CurrentJob != null && _proto.TryIndex(_skillsComp.CurrentJob, out var jobPrototype))
             jobName = jobPrototype.LocalizedName;
 
         return new SkillsAdminEuiState(
@@ -89,10 +86,9 @@ public sealed class SkillsAdminEui : BaseEui
         if (_skillsComp == null)
             return;
 
-        var defaultSkills = _skillsSystem.ConvertToSkillTypeDict(_skillsSystem.GetDefaultSkillsForJob(_skillsComp.CurrentJob));
+        var defaultSkills = _skillsSystem.GetDefaultSkillsForJob(_skillsComp.CurrentJob);
 
-        var skillType = (SkillType)message.SkillKey;
-        _skillsSystem.SetSkillLevelAdmin(_targetEntity, skillType, message.NewLevel, defaultSkills, _skillsComp);
+        _skillsSystem.SetSkillLevelAdmin(_targetEntity, message.SkillId, message.NewLevel, defaultSkills, _skillsComp);
 
         if (_entMan.TryGetComponent<ActorComponent>(_targetEntity, out var actor))
             _prayer.SendSubtleMessage(actor.PlayerSession, actor.PlayerSession, string.Empty, Loc.GetString("skills-admin-notify-skills-changed"));
@@ -137,4 +133,3 @@ public sealed class SkillsAdminEui : BaseEui
         return _entMan.GetComponent<MetaDataComponent>(entity).EntityName;
     }
 }
-

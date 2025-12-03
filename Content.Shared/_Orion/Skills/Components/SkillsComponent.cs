@@ -1,3 +1,4 @@
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared.Roles;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -11,8 +12,8 @@ namespace Content.Shared._Orion.Skills.Components;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState, Access(typeof(SharedSkillsSystem))]
 public sealed partial class SkillsComponent : Component
 {
-    [DataField, AutoNetworkedField]
-    public Dictionary<SkillType, int> Skills = new();
+    [DataField]
+    public Dictionary<ProtoId<SkillPrototype>, int> Skills = new();
 
     [DataField, AutoNetworkedField]
     public int UnspentPoints;

@@ -59,7 +59,7 @@ using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
 using Content.Goobstation.Common.Barks;
-using Content.Shared._Orion.Skills;
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared.Traits;
 using Robust.Shared.Collections;
 using Robust.Shared.Configuration;
@@ -221,6 +221,11 @@ namespace Content.Shared.Preferences
         /// </summary>
         public IReadOnlySet<ProtoId<TraitPrototype>> TraitPreferences => _traitPreferences;
 
+        // Orion-Start
+        [DataField]
+        public Dictionary<string, Dictionary<ProtoId<SkillPrototype>, int>> Skills { get; set; } = new();
+        // Orion-End
+
         /// <summary>
         /// If we're unable to get one of our preferred jobs do we spawn as a fallback job or do we stay in lobby.
         /// </summary>
@@ -258,7 +263,7 @@ namespace Content.Shared.Preferences
             HashSet<ProtoId<TraitPrototype>> traitPreferences,
             Dictionary<string, RoleLoadout> loadouts,
             ProtoId<BarkPrototype> barkVoice, // Goob Station - Barks
-            Dictionary<string, Dictionary<byte, int>> skills // Orion
+            Dictionary<string, Dictionary<ProtoId<SkillPrototype>, int>> skills // Orion
             )
         {
             Name = name;
@@ -439,10 +444,6 @@ namespace Content.Shared.Preferences
             };
         }
 
-        // Orion-Start
-        [DataField] public Dictionary<string, Dictionary<byte, int>> Skills { get; set; } = new();
-        // Orion-End
-
         public HumanoidCharacterProfile WithName(string name)
         {
             return new(this) { Name = name };
@@ -590,17 +591,17 @@ namespace Content.Shared.Preferences
         }
 
         // Orion-Start
-        public HumanoidCharacterProfile WithSkill(string jobName, byte skillKey, int level)
+        public HumanoidCharacterProfile WithSkill(string jobName, ProtoId<SkillPrototype> skillId, int level)
         {
-            var newSkills = new Dictionary<string, Dictionary<byte, int>>(Skills);
+            var newSkills = new Dictionary<string, Dictionary<ProtoId<SkillPrototype>, int>>(Skills);
             if (!newSkills.TryGetValue(jobName, out var jobSkills))
             {
-                jobSkills = new Dictionary<byte, int>();
+                jobSkills = new Dictionary<ProtoId<SkillPrototype>, int>();
                 newSkills[jobName] = jobSkills;
             }
 
-            var newJobSkills = new Dictionary<byte, int>(jobSkills);
-            newJobSkills[skillKey] = level;
+            var newJobSkills = new Dictionary<ProtoId<SkillPrototype>, int>(jobSkills);
+            newJobSkills[skillId] = Math.Clamp(level, 1, 4);
             newSkills[jobName] = newJobSkills;
 
             return new(this) { Skills = newSkills };
@@ -1046,23 +1047,22 @@ namespace Content.Shared.Preferences
                          .ToList();
 
             // Orion-Start
-            var validSkills = new Dictionary<string, Dictionary<byte, int>>();
+            var validSkills = new Dictionary<string, Dictionary<ProtoId<SkillPrototype>, int>>();
+
             foreach (var (jobName, jobSkillDict) in Skills)
             {
-                var validJobSkills = new Dictionary<byte, int>();
-                foreach (var (skillByte, level) in jobSkillDict)
+                var validJobSkills = new Dictionary<ProtoId<SkillPrototype>, int>();
+                foreach (var (skillId, level) in jobSkillDict)
                 {
-                    if (Enum.IsDefined(typeof(SkillType), skillByte))
+                    if (prototypeManager.TryIndex(skillId, out _))
                     {
-                        var validLevel = Math.Clamp(level, 1, 4);
-                        validJobSkills[skillByte] = validLevel;
+                        validJobSkills[skillId] = Math.Clamp(level, 1, 4);
                     }
                 }
 
-                foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+                foreach (var skillProto in prototypeManager.EnumeratePrototypes<SkillPrototype>())
                 {
-                    var skillByte = (byte)skill;
-                    validJobSkills.TryAdd(skillByte, 1);
+                    validJobSkills.TryAdd(skillProto.ID, 1);
                 }
 
                 validSkills[jobName] = validJobSkills;
@@ -1070,15 +1070,15 @@ namespace Content.Shared.Preferences
 
             if (validSkills.Count == 0)
             {
-                var defaultSkills = new Dictionary<byte, int>();
-                foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+                var defaultSkills = new Dictionary<ProtoId<SkillPrototype>, int>();
+                foreach (var skillProto in prototypeManager.EnumeratePrototypes<SkillPrototype>())
                 {
-                    defaultSkills[(byte)skill] = 1;
+                    defaultSkills[skillProto.ID] = 1;
                 }
 
                 foreach (var job in _jobPriorities.Keys)
                 {
-                    validSkills[job.Id] = new Dictionary<byte, int>(defaultSkills);
+                    validSkills[job.Id] = new Dictionary<ProtoId<SkillPrototype>, int>(defaultSkills);
                 }
             }
             // Orion-End

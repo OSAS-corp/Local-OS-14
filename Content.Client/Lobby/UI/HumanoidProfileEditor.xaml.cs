@@ -1274,7 +1274,7 @@ namespace Content.Client.Lobby.UI
 
                 var currentSkills = skills.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 var defaultSkills = jobProto.DefaultSkills.ToDictionary(
-                    kvp => (byte)kvp.Key,
+                    kvp => kvp.Key,
                     kvp => kvp.Value
                 );
 
@@ -1287,37 +1287,35 @@ namespace Content.Client.Lobby.UI
                 if (spentPoints <= totalPoints)
                     continue;
 
-                foreach (var (skillKey, defaultValue) in defaultSkills)
+                foreach (var (skillId, defaultValue) in defaultSkills)
                 {
-                    Profile = Profile.WithSkill(jobId, skillKey, defaultValue);
+                    Profile = Profile.WithSkill(jobId, skillId, defaultValue);
                 }
 
                 var skillsToReset = currentSkills.Keys.Except(defaultSkills.Keys).ToList();
-                foreach (var skillKey in skillsToReset)
+                foreach (var skillId in skillsToReset)
                 {
-                    Profile = Profile.WithSkill(jobId, skillKey, 1);
+                    Profile = Profile.WithSkill(jobId, skillId, 1);
                 }
 
                 SetDirty();
             }
         }
 
-        private int CalculateSpentPoints(SharedSkillsSystem skillsSystem, Dictionary<byte, int> currentSkills, Dictionary<byte, int> defaultSkills)
+        private int CalculateSpentPoints(SharedSkillsSystem skillsSystem, Dictionary<ProtoId<SkillPrototype>, int> currentSkills, Dictionary<ProtoId<SkillPrototype>, int> defaultSkills)
         {
             var spentPoints = 0;
-            foreach (var (skillKey, currentLevel) in currentSkills)
+            foreach (var (skillId, currentLevel) in currentSkills)
             {
-                if (!Enum.IsDefined(typeof(SkillType), (SkillType)skillKey))
+                if (!_prototypeManager.HasIndex(skillId))
                     continue;
 
-                var skillType = (SkillType)skillKey;
-                var defaultLevel = defaultSkills.GetValueOrDefault(skillKey, 1);
-
+                var defaultLevel = defaultSkills.GetValueOrDefault(skillId, 1);
                 if (currentLevel <= defaultLevel)
                     continue;
 
-                var currentCost = skillsSystem.GetSkillTotalCost(skillType, currentLevel);
-                var defaultCost = skillsSystem.GetSkillTotalCost(skillType, defaultLevel);
+                var currentCost = skillsSystem.GetSkillTotalCost(skillId, currentLevel);
+                var defaultCost = skillsSystem.GetSkillTotalCost(skillId, defaultLevel);
                 spentPoints += currentCost - defaultCost;
             }
 
@@ -1727,9 +1725,9 @@ namespace Content.Client.Lobby.UI
 
             JobOverride = jobProto;
 
-            var currentSkills = Profile.Skills.GetValueOrDefault(jobProto.ID, new Dictionary<byte, int>());
+            var currentSkills = Profile.Skills.GetValueOrDefault(jobProto.ID, new Dictionary<ProtoId<SkillPrototype>, int>());
             var defaultSkills = jobProto.DefaultSkills.ToDictionary(
-                kvp => (byte)kvp.Key,
+                kvp => kvp.Key,
                 kvp => kvp.Value
             );
 
@@ -1738,9 +1736,9 @@ namespace Content.Client.Lobby.UI
             var totalPoints = bonusPoints + racialBonus;
 
             _skillsWindow = new SkillsWindow(jobProto.ID, currentSkills, defaultSkills, totalPoints);
-            _skillsWindow.OnSkillChanged += (jobId, skillKey, newLevel) =>
+            _skillsWindow.OnSkillChanged += (jobId, skillId, newLevel) =>
             {
-                Profile = Profile.WithSkill(jobId, skillKey, newLevel);
+                Profile = Profile.WithSkill(jobId, skillId, newLevel);
                 SetDirty();
             };
 

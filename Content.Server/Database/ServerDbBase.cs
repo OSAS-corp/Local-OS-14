@@ -139,6 +139,7 @@ using System.Threading.Tasks;
 using Content.Server.Administration.Logs;
 using Content.Server.Administration.Managers;
 using Content.Shared._Orion.CustomGhost;
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared._RMC14.LinkAccount;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Construction.Prototypes;
@@ -354,7 +355,15 @@ namespace Content.Server.Database
 
         private static HumanoidCharacterProfile ConvertProfiles(Profile profile)
         {
-            var jobSkills = profile.JobSkills.ToDictionary(js => js.JobName, js => js.Skills); // Orion
+            // Orion-Start
+            var jobSkills = profile.JobSkills.ToDictionary(
+                js => js.JobName,
+                js => js.Skills.ToDictionary(
+                    s => new ProtoId<SkillPrototype>(s.Key),
+                    s => s.Value
+                )
+            );
+            // Orion-End
             var jobs = profile.Jobs.ToDictionary(j => new ProtoId<JobPrototype>(j.JobName), j => (JobPriority) j.Priority);
             var antags = profile.Antags.Select(a => new ProtoId<AntagPrototype>(a.AntagName));
             var traits = profile.Traits.Select(t => new ProtoId<TraitPrototype>(t.TraitName));
@@ -451,7 +460,7 @@ namespace Content.Server.Database
                 traits.ToHashSet(),
                 loadouts,
                 barkVoice, // Goob Station - Barks
-                jobSkills // Orion
+                skills: jobSkills // Orion
             );
         }
 
@@ -502,10 +511,15 @@ namespace Content.Server.Database
             profile.JobSkills.Clear();
             foreach (var jobSkill in humanoid.Skills)
             {
+                var skillDict = jobSkill.Value.ToDictionary(
+                    s => s.Key.ToString(),
+                    s => s.Value
+                );
+
                 profile.JobSkills.Add(new ProfileJobSkills
                 {
                     JobName = jobSkill.Key,
-                    Skills = jobSkill.Value,
+                    Skills = skillDict,
                 });
             }
             // Orion-End

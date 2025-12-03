@@ -1,3 +1,5 @@
+using Content.Shared._Orion.Skills.Prototypes;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Orion.Skills.Events;
@@ -7,17 +9,17 @@ namespace Content.Shared._Orion.Skills.Events;
 //
 
 [ByRefEvent]
-public record struct SkillsAddedEvent();
+public record struct SkillsAddedEvent;
 
 [Serializable, NetSerializable]
 public sealed class SelectSkillPressedEvent : EntityEventArgs
 {
     public NetEntity Uid { get; }
-    public SkillType Skill { get; }
+    public ProtoId<SkillPrototype> Skill { get; }
     public int TargetLevel { get; }
     public string? JobId { get; }
 
-    public SelectSkillPressedEvent(NetEntity uid, SkillType skill, int targetLevel, string? jobId = null)
+    public SelectSkillPressedEvent(NetEntity uid, ProtoId<SkillPrototype> skill, int targetLevel, string? jobId = null)
     {
         Uid = uid;
         Skill = skill;

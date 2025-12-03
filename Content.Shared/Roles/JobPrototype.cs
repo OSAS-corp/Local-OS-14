@@ -96,7 +96,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-using Content.Shared._Orion.Skills;
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared.Access;
 using Content.Shared.Guidebook;
 using Content.Shared.Players.PlayTimeTracking;
@@ -135,10 +135,10 @@ namespace Content.Shared.Roles
         public string LocalizedName => Loc.GetString(Name);
 
         // Orion-Start
-        [DataField("defaultSkills")]
-        public Dictionary<SkillType, int> DefaultSkills { get; private set; } = new();
+        [DataField]
+        public Dictionary<ProtoId<SkillPrototype>, int> DefaultSkills { get; private set; } = new();
 
-        [DataField("bonusSkillPoints")]
+        [DataField]
         public int BonusSkillPoints { get; private set; }
         // Orion-End
 

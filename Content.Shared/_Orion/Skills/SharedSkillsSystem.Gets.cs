@@ -1,4 +1,5 @@
 using Content.Shared._Orion.Skills.Components;
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared.CCVar;
 using Robust.Shared.Random;
 
@@ -18,7 +19,7 @@ public abstract partial class SharedSkillsSystem
     /// <param name="requiredLevel">Required minimum level (1-4)</param>
     /// <param name="comp">An optional skill component</param>
     /// <returns>True if the skill is sufficient</returns>
-    public bool HasSkill(EntityUid uid, SkillType skill, int requiredLevel = 1, SkillsComponent? comp = null)
+    public bool HasSkill(EntityUid uid, SkillPrototype skill, int requiredLevel = 1, SkillsComponent? comp = null)
     {
         if (!_cfg.GetCVar(CCVars.SkillsEnabled))
             return true;
@@ -33,7 +34,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Checks if the entity has the correct skill level
     /// </summary>
-    public bool HasExactSkill(EntityUid uid, SkillType skill, int exactLevel, SkillsComponent? comp = null)
+    public bool HasExactSkill(EntityUid uid, SkillPrototype skill, int exactLevel, SkillsComponent? comp = null)
     {
         if (!_cfg.GetCVar(CCVars.SkillsEnabled))
             return true;
@@ -48,7 +49,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Gets the current skill level of the entity.
     /// </summary>
-    public int GetSkillLevel(EntityUid uid, SkillType skill, SkillsComponent? comp = null)
+    public int GetSkillLevel(EntityUid uid, SkillPrototype skill, SkillsComponent? comp = null)
     {
         if (!_cfg.GetCVar(CCVars.SkillsEnabled))
             return 1;
@@ -62,7 +63,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Checks whether an entity can perform an action based on the skill's success chance.
     /// </summary>
-    public bool CheckSkillChance(EntityUid uid, SkillType skill, float baseSuccessChance = 0.5f, SkillsComponent? comp = null)
+    public bool CheckSkillChance(EntityUid uid, SkillPrototype skill, float baseSuccessChance = 0.5f, SkillsComponent? comp = null)
     {
         if (!_cfg.GetCVar(CCVars.SkillsEnabled))
             return true;
@@ -71,47 +72,31 @@ public abstract partial class SharedSkillsSystem
             return _random.Prob(baseSuccessChance); // Basic probability if there are no skills
 
         var skillLevel = comp.Skills.GetValueOrDefault(skill, 1);
-
-        var skillModifier = skillLevel switch
-        {
-            1 => 0.8f, // Beginner - fine
-            2 => 1.0f, // Amateur - basic
-            3 => 1.3f, // Specialist - bonus
-            4 => 1.7f, // Professional - big bonus
-            _ => 1.0f,
-        };
-
+        var skillModifier = skill.ChanceModifiers.GetValueOrDefault(skillLevel, 1.0f);
         var successChance = baseSuccessChance * skillModifier;
+
         return _random.Prob(Math.Clamp(successChance, 0f, 1f));
     }
 
     /// <summary>
     /// Gets an efficiency modifier based on the skill level.
     /// </summary>
-    public float GetSkillEfficiency(EntityUid uid, SkillType skill, SkillsComponent? comp = null)
+    public float GetSkillEfficiency(EntityUid uid, SkillPrototype skill, SkillsComponent? comp = null)
     {
         if (!_cfg.GetCVar(CCVars.SkillsEnabled))
             return 1.0f;
 
         if (!Resolve(uid, ref comp))
-            return 1.0f; // Basic efficiency
+            return 1.0f;
 
         var skillLevel = comp.Skills.GetValueOrDefault(skill, 1);
-
-        return skillLevel switch
-        {
-            1 => 0.7f, // Beginner - 70% efficiency
-            2 => 1.0f, // Amateur - 100%
-            3 => 1.4f, // Specialist - 140%
-            4 => 1.8f, // Professional - 180%
-            _ => 1.0f,
-        };
+        return skill.EfficiencyModifiers.GetValueOrDefault(skillLevel, 1.0f);
     }
 
     /// <summary>
     /// Checks whether an entity can perform a complex action (requires multiple skills)
     /// </summary>
-    public bool CanPerformComplexAction(EntityUid uid, SkillsComponent? comp = null, params (SkillType skill, int requiredLevel)[] requirements)
+    public bool CanPerformComplexAction(EntityUid uid, SkillsComponent? comp = null, params (SkillPrototype skill, int requiredLevel)[] requirements)
     {
         if (!_cfg.GetCVar(CCVars.SkillsEnabled))
             return true;
@@ -150,10 +135,10 @@ public abstract partial class SharedSkillsSystem
     {
         return level switch
         {
-            1 => Color.Gray,     // Beginner
-            2 => Color.Yellow,   // Amateur
-            3 => Color.Blue,     // Specialist
-            4 => Color.Green,    // Professional
+            1 => Color.Gray,
+            2 => Color.Yellow,
+            3 => Color.Blue,
+            4 => Color.Green,
             _ => Color.White,
         };
     }

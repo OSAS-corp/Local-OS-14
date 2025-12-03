@@ -1,3 +1,6 @@
+using Content.Shared._Orion.Skills.Prototypes;
+using Robust.Shared.Prototypes;
+
 namespace Content.Shared._Orion.Skills.Components;
 
 //
@@ -11,19 +14,19 @@ public sealed partial class InitialSkillsComponent : Component
     /// Skills that are set to exact levels when the entity is created.
     /// </summary>
     [DataField]
-    public Dictionary<SkillType, int> InitialSkills = new();
+    public Dictionary<ProtoId<SkillPrototype>, int> InitialSkills = new();
 
     /// <summary>
     /// Skills that are set to random levels when the entity is created.
     /// </summary>
     [DataField]
-    public List<SkillType> RandomSkills = new();
+    public List<ProtoId<SkillPrototype>> RandomSkills = new();
 
     /// <summary>
     /// Skills that are added to existing skills (if entity already has skills component).
     /// </summary>
     [DataField]
-    public Dictionary<SkillType, int> AddSkills = new();
+    public Dictionary<ProtoId<SkillPrototype>, int> AddSkills = new();
 
     /// <summary>
     /// Whether to randomize ALL skills when the entity is created. False by default.

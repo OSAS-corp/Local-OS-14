@@ -25,9 +25,9 @@ public sealed class SkillsEui : BaseEui
             SendMessage(new SkillsEuiClosedMessage());
         };
 
-        _window.OnSkillChanged += (jobId, skillKey, newLevel) =>
+        _window.OnSkillChanged += (jobId, skillId, newLevel) =>
         {
-            SendMessage(new SkillsEuiSkillChangedMessage(jobId, skillKey, newLevel));
+            SendMessage(new SkillsEuiSkillChangedMessage(jobId, skillId, newLevel));
         };
     }
 

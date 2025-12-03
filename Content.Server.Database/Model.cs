@@ -246,14 +246,20 @@ namespace Content.Server.Database
             // Orion-Start
             modelBuilder.Entity<ProfileJobSkills>(entity =>
             {
-                var converter = new ValueConverter<Dictionary<byte, int>, string>(
-                    v => JsonSerializer.Serialize(v, (JsonSerializerOptions)null!),
-                    v => JsonSerializer.Deserialize<Dictionary<byte, int>>(v, (JsonSerializerOptions)null!) ?? new());
+                var options = new JsonSerializerOptions
+                {
+                    WriteIndented = false,
+                    PropertyNameCaseInsensitive = true
+                };
 
-                var comparer = new ValueComparer<Dictionary<byte, int>>(
-                    (l, r) => l != null && r != null && l.SequenceEqual(r),
-                    v => v.Aggregate(0, (a, p) => HashCode.Combine(a, p.Key.GetHashCode(), p.Value.GetHashCode())),
-                    v => v.ToDictionary(kv => kv.Key, kv => kv.Value));
+                var converter = new ValueConverter<Dictionary<string, int>, string>(
+                    v => JsonSerializer.Serialize(v, options),
+                    v => JsonSerializer.Deserialize<Dictionary<string, int>>(v, options) ?? new());
+
+                var comparer = new ValueComparer<Dictionary<string, int>>(
+                    (l, r) => l != null && r != null && l.Count == r.Count && !l.Except(r).Any(),
+                    v => v.Aggregate(0, (a, x) => HashCode.Combine(a, x.Key.GetHashCode(), x.Value.GetHashCode())),
+                    v => v.ToDictionary(x => x.Key, x => x.Value));
 
                 entity.Property(e => e.Skills)
                     .HasConversion(converter)
@@ -803,7 +809,7 @@ namespace Content.Server.Database
         public string JobName { get; set; } = string.Empty;
 
         [Column(TypeName = "jsonb")]
-        public Dictionary<byte, int> Skills { get; set; } = new();
+        public Dictionary<string, int> Skills { get; set; } = new();
     }
 
     #endregion

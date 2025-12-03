@@ -20,43 +20,29 @@ public abstract partial class SharedSkillsSystem : EntitySystem
     }
 
     /// <summary>
-    /// Gets a skill prototype.
+    /// Gets a skill prototype by ID.
     /// </summary>
-    public SkillPrototype GetSkillPrototype(SkillType skill)
+    public SkillPrototype GetSkillPrototype(ProtoId<SkillPrototype> id)
     {
-        var skillId = GetSkillPrototypeId(skill);
-        return _prototype.Index<SkillPrototype>(skillId);
-    }
+        if (!_prototype.TryIndex(id, out var prototype))
+            throw new ArgumentException($"Skill prototype not found: {id}");
 
-    /// <summary>
-    /// Gets the prototype ID for SkillType.
-    /// </summary>
-    public string GetSkillPrototypeId(SkillType skill)
-    {
-        foreach (var skillProto in _prototype.EnumeratePrototypes<SkillPrototype>())
-        {
-            if (skillProto.SkillType == skill)
-                return skillProto.ID;
-        }
-
-        throw new ArgumentException($"No skill prototype found for SkillType: {skill}");
+        return prototype;
     }
 
     /// <summary>
     /// Gets an array of costs for a skill.
     /// </summary>
-    public int[] GetSkillCost(SkillType skill)
+    public int[] GetSkillCost(ProtoId<SkillPrototype> id)
     {
-        var prototype = GetSkillPrototype(skill);
-        return prototype.Costs;
+        return GetSkillPrototype(id).Costs;
     }
 
     /// <summary>
     /// Gets a color for the skill.
     /// </summary>
-    public Color GetSkillColor(SkillType skill)
+    public Color GetSkillColor(ProtoId<SkillPrototype> id)
     {
-        var prototype = GetSkillPrototype(skill);
-        return prototype.Color;
+        return GetSkillPrototype(id).Color;
     }
 }

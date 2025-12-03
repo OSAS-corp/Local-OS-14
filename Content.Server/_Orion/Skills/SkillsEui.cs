@@ -1,9 +1,10 @@
-using System.Linq;
 using Content.Server.EUI;
 using Content.Shared._Orion.Skills;
 using Content.Shared._Orion.Skills.Components;
+using Content.Shared._Orion.Skills.Prototypes;
 using Content.Shared._Orion.Skills.Ui;
 using Content.Shared.Eui;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server._Orion.Skills;
 
@@ -14,6 +15,7 @@ namespace Content.Server._Orion.Skills;
 public sealed class SkillsEui : BaseEui
 {
     [Dependency] private readonly IEntityManager _entMan = default!;
+    [Dependency] private readonly IPrototypeManager _protoMan = default!;
 
     private readonly EntityUid _entity;
     private readonly SharedSkillsSystem _skillsSystem;
@@ -33,14 +35,16 @@ public sealed class SkillsEui : BaseEui
         if (!_entMan.TryGetComponent<SkillsComponent>(_entity, out var skillsComp))
             return new SkillsEuiState(_jobId, new(), new(), 0, 0);
 
-        var currentSkills = skillsComp.Skills.ToDictionary(
-            kvp => (byte)kvp.Key,
-            kvp => kvp.Value
-        );
+        var currentSkills = new Dictionary<ProtoId<SkillPrototype>, int>(skillsComp.Skills);
 
         var defaultSkills = _skillsSystem.GetDefaultSkillsForJob(_jobId);
 
-        return new SkillsEuiState(_jobId, currentSkills, defaultSkills, _skillsSystem.GetTotalPoints(_entity, _jobId, skillsComp), skillsComp.SpentPoints);
+        return new SkillsEuiState(
+            _jobId,
+            currentSkills,
+            defaultSkills,
+            _skillsSystem.GetTotalPoints(_entity, _jobId, skillsComp),
+            skillsComp.SpentPoints);
     }
 
     public override void HandleMessage(EuiMessageBase msg)
@@ -64,9 +68,9 @@ public sealed class SkillsEui : BaseEui
         if (!_entMan.TryGetComponent<SkillsComponent>(_entity, out var skillsComp))
             return;
 
-        var skillType = (SkillType)message.SkillKey;
-        _skillsSystem.TrySetSkillLevel(_entity, skillType, message.NewLevel, _jobId, skillsComp);
+        var level = Math.Clamp(message.NewLevel, 1, 4);
 
+        _skillsSystem.TrySetSkillLevel(_entity, message.SkillId, level, _jobId, skillsComp);
         StateDirty();
     }
 }

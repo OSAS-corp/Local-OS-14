@@ -325,12 +325,9 @@ public sealed class CharacterUIController : UIController, IOnStateEntered<Gamepl
         var jobId = skillsComp.CurrentJob;
         var defaultSkills = skillsSystem.GetDefaultSkillsForJob(jobId);
         var totalPoints = skillsSystem.GetTotalPoints(entity, jobId, skillsComp);
-        var currentSkills = skillsComp.Skills.ToDictionary(
-            kvp => (byte)kvp.Key,
-            kvp => kvp.Value
-        );
+        var currentSkills = skillsComp.Skills;
 
-        var skillsWindow = new SkillsWindow(
+        _skillsWindow = new SkillsWindow(
             jobId ?? "unknown",
             currentSkills,
             defaultSkills,
@@ -338,19 +335,16 @@ public sealed class CharacterUIController : UIController, IOnStateEntered<Gamepl
             true
         );
 
-        _skillsWindow = skillsWindow;
-
-        skillsWindow.OnSkillChanged += (changedJobId, skillKey, newLevel) =>
+        _skillsWindow.OnSkillChanged += (changedJobId, skillId, newLevel) =>
         {
             if (_player.LocalEntity is not { } localEntity)
                 return;
 
-            var skillType = (SkillType)skillKey;
-            var ev = new SelectSkillPressedEvent(_ent.GetNetEntity(localEntity), skillType, newLevel, changedJobId);
+            var ev = new SelectSkillPressedEvent(_ent.GetNetEntity(localEntity), skillId, newLevel, changedJobId);
             _entityNetworkManager.SendSystemNetworkMessage(ev);
         };
 
-        skillsWindow.OpenCentered();
+        _skillsWindow.OpenCentered();
     }
     // Orion-End
 }

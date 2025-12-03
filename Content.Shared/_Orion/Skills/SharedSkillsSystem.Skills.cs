@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Shared._Orion.Skills.Components;
 using Content.Shared._Orion.Skills.Events;
 using Content.Shared._Orion.Skills.Prototypes;
@@ -7,6 +8,7 @@ using Content.Shared.Humanoid;
 using Content.Shared.Preferences;
 using Content.Shared.Roles;
 using Robust.Shared.Configuration;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Orion.Skills;
 
@@ -18,10 +20,17 @@ public abstract partial class SharedSkillsSystem
 {
     [Dependency] private readonly IConfigurationManager _cfg = default!;
 
+    private readonly Dictionary<ProtoId<SkillPrototype>, SkillPrototype> _skillPrototypes = new();
+
     #region Initialization
 
     public void InitializeSkills()
     {
+        foreach (var skillProto in _prototype.EnumeratePrototypes<SkillPrototype>())
+        {
+            _skillPrototypes[skillProto.ID] = skillProto;
+        }
+
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
         SubscribeLocalEvent<InitialSkillsComponent, MapInitEvent>(OnMapInit);
     }
@@ -51,19 +60,21 @@ public abstract partial class SharedSkillsSystem
         skillsComp.CurrentJob = jobId;
 
         var bonusPoints = 0;
-        Dictionary<SkillType, int> defaultSkills = new();
+        var defaultSkills = new Dictionary<ProtoId<SkillPrototype>, int>();
+
         if (jobId != null && _prototype.TryIndex<JobPrototype>(jobId, out var jobPrototype))
         {
             defaultSkills = jobPrototype.DefaultSkills;
             bonusPoints = jobPrototype.BonusSkillPoints;
         }
 
-        var racialBonus = CalculateRacialBonus(profile.Species, profile.Age);
+        var racialBonus = CalculateSpeciesBonus(profile.Species, profile.Age);
         var totalPoints = bonusPoints + racialBonus;
-        foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+
+        foreach (var (skillId, _) in _skillPrototypes)
         {
-            var defaultLevel = defaultSkills.GetValueOrDefault(skill, 1);
-            skillsComp.Skills[skill] = defaultLevel;
+            var defaultLevel = defaultSkills.GetValueOrDefault(skillId, 1);
+            skillsComp.Skills[skillId] = defaultLevel;
         }
 
         if (jobId != null && profile.Skills.TryGetValue(jobId, out var profileSkills))
@@ -87,7 +98,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Recalculates the total number of points spent for all skills, excluding default skill costs
     /// </summary>
-    public void RecalculateSpentPoints(EntityUid uid, SkillsComponent? comp = null, Dictionary<SkillType, int>? defaultSkills = null)
+    public void RecalculateSpentPoints(EntityUid uid, SkillsComponent? comp = null, Dictionary<ProtoId<SkillPrototype>, int>? defaultSkills = null)
     {
         if (!Resolve(uid, ref comp))
             return;
@@ -96,11 +107,15 @@ public abstract partial class SharedSkillsSystem
 
         foreach (var (skill, level) in comp.Skills)
         {
+            if (!_skillPrototypes.ContainsKey(skill))
+                continue;
+
             var defaultLevel = defaultSkills?.GetValueOrDefault(skill, 1) ?? 1;
-            if (level > defaultLevel)
-            {
-                comp.SpentPoints += GetSkillTotalCost(skill, level) - GetSkillTotalCost(skill, defaultLevel);
-            }
+            if (level <= defaultLevel)
+                continue;
+
+            var cost = GetSkillTotalCost(skill, level) - GetSkillTotalCost(skill, defaultLevel);
+            comp.SpentPoints += cost;
         }
     }
 
@@ -113,60 +128,45 @@ public abstract partial class SharedSkillsSystem
             return;
 
         var defaultSkills = GetDefaultSkillsForJob(jobId);
-        RecalculateSpentPoints(uid, comp, ConvertToSkillTypeDict(defaultSkills));
-    }
-
-    /// <summary>
-    /// Converts byte-based dictionary to SkillType-based dictionary
-    /// </summary>
-    public Dictionary<SkillType, int> ConvertToSkillTypeDict(Dictionary<byte, int> byteDict)
-    {
-        var result = new Dictionary<SkillType, int>();
-        foreach (var (skillKey, level) in byteDict)
-        {
-            if (Enum.IsDefined(typeof(SkillType), (SkillType)skillKey))
-            {
-                result[(SkillType)skillKey] = level;
-            }
-        }
-        return result;
+        RecalculateSpentPoints(uid, comp, defaultSkills);
     }
 
     /// <summary>
     /// Calculates the cost of increasing a skill to the specified level
     /// </summary>
-    public int GetSkillTotalCost(SkillType skill, int targetLevel)
+    public int GetSkillTotalCost(ProtoId<SkillPrototype> skill, int targetLevel)
     {
-        var costs = GetSkillCost(skill);
+        if (!_prototype.TryIndex(skill, out var prototype))
+            return 0;
+
         targetLevel = Math.Clamp(targetLevel, 1, 4);
+
+        if (prototype.Costs.Length < targetLevel)
+            return 0;
 
         var totalCost = 0;
         for (var i = 0; i < targetLevel; i++)
         {
-            totalCost += costs[i];
+            totalCost += prototype.Costs[i];
         }
         return totalCost;
     }
 
     /// <summary>
-    /// Calculates the cost of the current skill level
-    /// </summary>
-    public int GetCurrentSkillCost(SkillType skill, int currentLevel)
-    {
-        return GetSkillTotalCost(skill, currentLevel);
-    }
-
-    /// <summary>
     /// Calculates the cost of increasing a skill by one level
     /// </summary>
-    public int GetSkillUpgradeCost(SkillType skill, int currentLevel)
+    public int GetSkillUpgradeCost(ProtoId<SkillPrototype> skill, int currentLevel)
     {
         if (currentLevel >= 4)
             return 0;
 
-        var costs = GetSkillCost(skill);
+        if (!_prototype.TryIndex(skill, out var prototype))
+            return 0;
 
-        return costs[currentLevel];
+        if (currentLevel >= prototype.Costs.Length)
+            return 0;
+
+        return prototype.Costs[currentLevel];
     }
 
     #endregion
@@ -176,45 +176,49 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Applies skills from the profile, taking into account the point limit
     /// </summary>
-    private void ApplyProfileSkillsWithLimit(SkillsComponent skillsComp, Dictionary<byte, int> profileSkills, Dictionary<SkillType, int> defaultSkills, int totalPoints)
+    private void ApplyProfileSkillsWithLimit(SkillsComponent skillsComp, Dictionary<ProtoId<SkillPrototype>, int> profileSkills, Dictionary<ProtoId<SkillPrototype>, int> defaultSkills, int totalPoints)
     {
         var spentPoints = 0;
-        var tempSkills = new Dictionary<SkillType, int>(skillsComp.Skills);
+        var tempSkills = new Dictionary<ProtoId<SkillPrototype>, int>();
 
-        foreach (var (skillKey, level) in profileSkills)
+        foreach (var (skillId, _) in _skillPrototypes)
         {
-            var skillType = (SkillType)skillKey;
-            if (!Enum.IsDefined(typeof(SkillType), skillType))
+            tempSkills[skillId] = defaultSkills.GetValueOrDefault(skillId, 1);
+        }
+
+        foreach (var (skillId, level) in profileSkills)
+        {
+            if (!_skillPrototypes.ContainsKey(skillId))
                 continue;
 
             var clampedLevel = Math.Clamp(level, 1, 4);
-            var defaultLevel = defaultSkills.GetValueOrDefault(skillType, 1);
+            var defaultLevel = defaultSkills.GetValueOrDefault(skillId, 1);
 
             if (clampedLevel > defaultLevel)
             {
-                var cost = GetSkillTotalCost(skillType, clampedLevel) - GetSkillTotalCost(skillType, defaultLevel);
+                var cost = GetSkillTotalCost(skillId, clampedLevel) - GetSkillTotalCost(skillId, defaultLevel);
                 if (spentPoints + cost <= totalPoints)
                 {
-                    tempSkills[skillType] = clampedLevel;
+                    tempSkills[skillId] = clampedLevel;
                     spentPoints += cost;
                 }
                 else
                 {
-                    var maxAffordableLevel = FindMaxAffordableLevel(skillType, defaultLevel, totalPoints - spentPoints);
+                    var maxAffordableLevel = FindMaxAffordableLevel(skillId, defaultLevel, totalPoints - spentPoints);
                     if (maxAffordableLevel > defaultLevel)
                     {
-                        tempSkills[skillType] = maxAffordableLevel;
-                        spentPoints += GetSkillTotalCost(skillType, maxAffordableLevel) - GetSkillTotalCost(skillType, defaultLevel);
+                        tempSkills[skillId] = maxAffordableLevel;
+                        spentPoints += GetSkillTotalCost(skillId, maxAffordableLevel) - GetSkillTotalCost(skillId, defaultLevel);
                     }
                     else
                     {
-                        tempSkills[skillType] = defaultLevel;
+                        tempSkills[skillId] = defaultLevel;
                     }
                 }
             }
             else
             {
-                tempSkills[skillType] = clampedLevel;
+                tempSkills[skillId] = clampedLevel;
             }
         }
 
@@ -224,7 +228,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Finds the maximum available skill level within the budget
     /// </summary>
-    private int FindMaxAffordableLevel(SkillType skill, int currentLevel, int availablePoints)
+    private int FindMaxAffordableLevel(ProtoId<SkillPrototype> skill, int currentLevel, int availablePoints)
     {
         var maxLevel = currentLevel;
         var currentCost = 0;
@@ -249,7 +253,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Sets skill level with automatic detection of increase/decrease and default level check
     /// </summary>
-    public bool TrySetSkillLevel(EntityUid uid, SkillType skill, int targetLevel, string? jobId = null, SkillsComponent? comp = null)
+    public bool TrySetSkillLevel(EntityUid uid, ProtoId<SkillPrototype> skill, int targetLevel, string? jobId = null, SkillsComponent? comp = null)
     {
         if (!Resolve(uid, ref comp))
             return false;
@@ -272,7 +276,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Increases skill to specified level
     /// </summary>
-    private bool TryIncreaseToLevel(EntityUid uid, SkillType skill, int targetLevel, SkillsComponent comp, int defaultLevel, string? jobId = null)
+    private bool TryIncreaseToLevel(EntityUid uid, ProtoId<SkillPrototype> skill, int targetLevel, SkillsComponent comp, int defaultLevel, string? jobId = null)
     {
         var currentLevel = comp.Skills.GetValueOrDefault(skill, 1);
 
@@ -297,7 +301,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Decreases skill to specified level
     /// </summary>
-    private bool TryDecreaseToLevel(EntityUid uid, SkillType skill, int targetLevel, SkillsComponent comp, int defaultLevel, string? jobId = null)
+    private bool TryDecreaseToLevel(EntityUid uid, ProtoId<SkillPrototype> skill, int targetLevel, SkillsComponent comp, int defaultLevel, string? jobId = null)
     {
         var currentLevel = comp.Skills.GetValueOrDefault(skill, 1);
 
@@ -326,34 +330,34 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Gets default skill level for job
     /// </summary>
-    public int GetDefaultSkillLevelForJob(SkillType skill, string? jobId)
+    public int GetDefaultSkillLevelForJob(ProtoId<SkillPrototype> skill, string? jobId)
     {
         if (jobId != null && _prototype.TryIndex<JobPrototype>(jobId, out var jobPrototype))
         {
             return jobPrototype.DefaultSkills.GetValueOrDefault(skill, 1);
         }
 
-        return 1; // Default base level
+        return 1;
     }
 
     /// <summary>
     /// Gets default skills for job
     /// </summary>
-    public Dictionary<byte, int> GetDefaultSkillsForJob(string? jobId)
+    public Dictionary<ProtoId<SkillPrototype>, int> GetDefaultSkillsForJob(string? jobId)
     {
-        var defaultSkills = new Dictionary<byte, int>();
-        foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+        var defaultSkills = new Dictionary<ProtoId<SkillPrototype>, int>();
+
+        foreach (var skillProto in _prototype.EnumeratePrototypes<SkillPrototype>())
         {
-            defaultSkills[(byte)skill] = 1;
+            defaultSkills[skillProto.ID] = 1;
         }
 
         if (jobId == null || !_prototype.TryIndex<JobPrototype>(jobId, out var jobPrototype))
             return defaultSkills;
+
+        foreach (var (skill, level) in jobPrototype.DefaultSkills)
         {
-            foreach (var (skill, level) in jobPrototype.DefaultSkills)
-            {
-                defaultSkills[(byte)skill] = level;
-            }
+            defaultSkills[skill] = level;
         }
 
         return defaultSkills;
@@ -370,8 +374,7 @@ public abstract partial class SharedSkillsSystem
         var defaultSkills = GetDefaultSkillsForJob(jobId);
         foreach (var (skill, level) in comp.Skills)
         {
-            var defaultLevel = defaultSkills.GetValueOrDefault((byte)skill, 1);
-            if (level != defaultLevel)
+            if (level != defaultSkills.GetValueOrDefault(skill, 1))
                 return false;
         }
 
@@ -397,7 +400,7 @@ public abstract partial class SharedSkillsSystem
     /// <summary>
     /// Directly sets skill level without point restrictions for admin control
     /// </summary>
-    public void SetSkillLevelAdmin(EntityUid uid, SkillType skill, int level, Dictionary<SkillType, int>? defaultSkills, SkillsComponent? comp = null)
+    public void SetSkillLevelAdmin(EntityUid uid, ProtoId<SkillPrototype> skill, int level, Dictionary<ProtoId<SkillPrototype>, int>? defaultSkills, SkillsComponent? comp = null)
     {
         if (!Resolve(uid, ref comp))
             return;
@@ -417,9 +420,9 @@ public abstract partial class SharedSkillsSystem
         if (!Resolve(uid, ref comp))
             return;
 
-        foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+        foreach (var skillProto in _prototype.EnumeratePrototypes<SkillPrototype>())
         {
-            comp.Skills[skill] = 1;
+            comp.Skills[skillProto.ID] = 1;
         }
 
         comp.UnspentPoints = 0;
@@ -445,14 +448,14 @@ public abstract partial class SharedSkillsSystem
         if (jobId != null && _prototype.TryIndex<JobPrototype>(jobId, out var jobPrototype))
             bonusPoints = jobPrototype.BonusSkillPoints;
 
-        var racialBonus = CalculateRacialBonus(humanoid.Species, humanoid.Age);
+        var racialBonus = CalculateSpeciesBonus(humanoid.Species, humanoid.Age);
         return bonusPoints + racialBonus + comp.BonusPoints;
     }
 
     /// <summary>
-    /// Calculates racial bonus of skill points
+    /// Calculates species bonus of skill points
     /// </summary>
-    private int CalculateRacialBonus(string species, int age)
+    private int CalculateSpeciesBonus(string species, int age)
     {
         var bonus = 0;
         foreach (var racialBonusProto in _prototype.EnumeratePrototypes<SpeciesSkillBonusPrototype>())
@@ -465,6 +468,13 @@ public abstract partial class SharedSkillsSystem
         }
 
         return bonus;
+    }
+
+    public IEnumerable<ProtoId<SkillPrototype>> GetAllSkillPrototypes()
+    {
+        return _prototype
+            .EnumeratePrototypes<SkillPrototype>()
+            .Select(p => new ProtoId<SkillPrototype>(p.ID));
     }
 
     #endregion
@@ -501,9 +511,9 @@ public abstract partial class SharedSkillsSystem
         if (initial.OverrideExisting)
         {
             skillsComp.Skills.Clear();
-            foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+            foreach (var skillProto in _prototype.EnumeratePrototypes<SkillPrototype>())
             {
-                skillsComp.Skills[skill] = 1;
+                skillsComp.Skills[skillProto.ID] = 1;
             }
         }
 
@@ -536,9 +546,9 @@ public abstract partial class SharedSkillsSystem
         minLevel = Math.Clamp(minLevel, 1, 4);
         maxLevel = Math.Clamp(maxLevel, 1, 4);
 
-        foreach (SkillType skill in Enum.GetValues(typeof(SkillType)))
+        foreach (var skillProto in _prototype.EnumeratePrototypes<SkillPrototype>())
         {
-            comp.Skills[skill] = _random.Next(minLevel, maxLevel + 1);
+            comp.Skills[skillProto.ID] = _random.Next(minLevel, maxLevel + 1);
         }
     }
 
