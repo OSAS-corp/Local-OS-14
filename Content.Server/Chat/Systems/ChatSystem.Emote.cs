@@ -26,7 +26,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 using System.Collections.Frozen;
-using Content.Goobstation.Common.MisandryBox;
 using Content.Shared.Chat; // Einstein Engines - Languages & Goobmod
 using Content.Server.Popups;
 using Content.Shared.Chat.Prototypes;
@@ -194,12 +193,14 @@ public partial class ChatSystem
         // optional override params > general params for all sounds in set > individual sound params
         var param = audioParams ?? proto.GeneralParams ?? sound.Params;
 
+/* // Orion-Edit: Removed
         // Goobstation/MisandryBox - Emote spam countermeasures
         var ev = new EmoteSoundPitchShiftEvent();
         RaiseLocalEvent(uid, ref ev);
 
         param.Pitch += ev.Pitch;
         // Goobstation/MisandryBox
+*/
 
         _audio.PlayPvs(sound, uid, param);
         return true;

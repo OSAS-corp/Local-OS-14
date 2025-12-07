@@ -351,7 +351,7 @@ namespace Content.Server.Ghost
 
         private void OnGhostExamine(EntityUid uid, GhostComponent component, ExaminedEvent args)
         {
-            var timeSinceDeath = _gameTiming.CurTime.Subtract(component.TimeOfDeath); // Orion-Edit | RealTime > CurTime
+            var timeSinceDeath = _gameTiming.CurTime.Subtract(component.TimeOfDeath); // Orion-Edit: RealTime > CurTime
             var deathTimeInfo = timeSinceDeath.Minutes > 0
                 ? Loc.GetString("comp-ghost-examine-time-minutes", ("minutes", timeSinceDeath.Minutes))
                 : Loc.GetString("comp-ghost-examine-time-seconds", ("seconds", timeSinceDeath.Seconds));
@@ -438,7 +438,7 @@ namespace Content.Server.Ghost
                 return;
             }
 
-//            WarpTo(attached, target); // Orion-Remove
+//            WarpTo(attached, target); // Orion-Edit: Removed
 
             _adminLog.Add(LogType.GhostWarp, $"{ToPrettyString(attached)} ghost warped to {ToPrettyString(target)}");
 
@@ -503,9 +503,9 @@ namespace Content.Server.Ghost
         }
         // Orion-End
 
-        private List<GhostWarpPlayer> GetPlayerWarps() // Orion-Edit | GetLocationWarps > GetPlayerWarps
+        private List<GhostWarpPlayer> GetPlayerWarps() // Orion-Edit: GetLocationWarps > GetPlayerWarps
         {
-/* // Orion-Remove
+/* // Orion-Edit: Removed
             var allQuery = AllEntityQuery<WarpPointComponent>();
 
             while (allQuery.MoveNext(out var uid, out var warp))
@@ -617,7 +617,7 @@ namespace Content.Server.Ghost
         }
         // Orion-End
 
-/* // Orion-Remove
+/* // Orion-Edit: Removed
         private IEnumerable<GhostWarp> GetPlayerWarps(EntityUid except)
         {
             foreach (var player in _player.Sessions)
@@ -746,7 +746,7 @@ namespace Content.Server.Ghost
             // Try setting the ghost entity name to either the character name or the player name.
             // If all else fails, it'll default to the default entity prototype name, "observer".
             // However, that should rarely happen.
-/* // Orion-Remove
+/* // Orion-Edit: Removed
             if (!string.IsNullOrWhiteSpace(mind.Comp.CharacterName))
                 _metaData.SetEntityName(ghost, mind.Comp.CharacterName);
             else if (mind.Comp.UserId is { } userId && _player.TryGetSessionById(userId, out var session))

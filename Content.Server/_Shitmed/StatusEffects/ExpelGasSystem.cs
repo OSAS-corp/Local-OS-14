@@ -21,6 +21,7 @@ public sealed class ExpelGasEffectSystem : EntitySystem
     {
         SubscribeLocalEvent<ExpelGasComponent, ComponentInit>(OnInit);
     }
+
     private void OnInit(EntityUid uid, ExpelGasComponent component, ComponentInit args)
     {
         var mix = _atmos.GetContainingMixture((uid, Transform(uid)), true, true) ?? new();
@@ -28,6 +29,4 @@ public sealed class ExpelGasEffectSystem : EntitySystem
         mix.AdjustMoles(gas, 60);
         _chat.TryEmoteWithChat(uid, "Fart");
     }
-
-
 }

@@ -532,7 +532,7 @@ namespace Content.Client.HealthAnalyzer.UI
             //TextInfo textInfo = new CultureInfo("en-US", false).TextInfo; // Orion-Edit
             var groupTitleText = $"{Loc.GetString(
                 "group-organ-status",
-                ("organ", name), // Orion-Edit | textInfo.ToTitleCase(name) -> name
+                ("organ", name), // Orion-Edit: textInfo.ToTitleCase(name) -> name
                 ("capacity", damage)
             )}";
 
@@ -570,7 +570,7 @@ namespace Content.Client.HealthAnalyzer.UI
                     Orientation = BoxContainer.LayoutOrientation.Vertical,
                 };
 
-                groupContainer.AddChild(CreateDiagnosticGroupTitle(groupTitleText, "metaphysical")); // Orion-Edit | textInfo.ToTitleCase(groupTitleText) -> groupTitleText
+                groupContainer.AddChild(CreateDiagnosticGroupTitle(groupTitleText, "metaphysical")); // Orion-Edit: textInfo.ToTitleCase(groupTitleText) -> groupTitleText
 
                 GroupsContainer.AddChild(groupContainer);
 

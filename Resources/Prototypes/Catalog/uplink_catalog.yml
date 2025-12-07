@@ -1615,7 +1615,7 @@
   #      tags:
   #        - NukeOpsUplink
 
-#  id: UplinkUplinkImplanter # Orion-Remove | Moved to preferences
+#  id: UplinkUplinkImplanter # Orion-Edit: Moved to preferences
 #  name: uplink-uplink-implanter-name
 #  description: uplink-uplink-implanter-desc
 #  icon: { sprite: /Textures/Objects/Devices/communication.rsi, state: radio }

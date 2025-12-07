@@ -14,10 +14,10 @@ namespace Content.Goobstation.UIKit.UserActions.Controls;
 [Virtual]
 public class IconButton : Button
 {
-    private readonly BoxContainer _mainContainer;
+//    private readonly BoxContainer _mainContainer; // Orion-Edit: Removed
 
     public readonly TextureRect Icon;
-    public readonly RichTextLabel Label;
+    public new readonly RichTextLabel Label; // Orion-Edit: Marked as new
     //public readonly PanelContainer HighlightRect;
 
     public IconButton(string name)
@@ -26,14 +26,14 @@ public class IconButton : Button
         Margin = new Thickness(1);
         HorizontalAlignment = HAlignment.Left;
 
-        _mainContainer = new BoxContainer
+        var mainContainer = new BoxContainer // Orion-Edit: Make var
         {
             Orientation = LayoutOrientation.Horizontal,
             //HorizontalExpand = true,
             MinSize = new Vector2(0, 24),
-            Margin = new Thickness(1)
+            Margin = new Thickness(1),
         };
-        AddChild(_mainContainer);
+        AddChild(mainContainer);
 
         Icon = new TextureRect
         {
@@ -46,9 +46,9 @@ public class IconButton : Button
             TextureScale = new Vector2(1, 1),
             MinSize = new Vector2(24, 24),
             MaxSize = new Vector2(24, 24),
-            Visible = true
+            Visible = true,
         };
-        _mainContainer.AddChild(Icon);
+        mainContainer.AddChild(Icon);
 
         Label = new RichTextLabel
         {
@@ -58,11 +58,12 @@ public class IconButton : Button
             VerticalAlignment = VAlignment.Center,
             Margin = new Thickness(1),
             Text = name,
-            Visible = true
+            Visible = true,
         };
-        _mainContainer.AddChild(Label);
+        mainContainer.AddChild(Label);
     }
 
+/*// Orion-Edit: Removed
     protected override void MouseExited()
     {
         base.MouseExited();
@@ -72,4 +73,5 @@ public class IconButton : Button
     {
         base.MouseEntered();
     }
+*/
 }

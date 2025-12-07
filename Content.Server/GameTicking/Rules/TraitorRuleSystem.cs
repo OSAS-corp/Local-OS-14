@@ -173,7 +173,7 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
 
     private void AfterEntitySelected(Entity<TraitorRuleComponent> ent, ref AfterAntagEntitySelectedEvent args)
     {
-        _log.Debug($"AfterAntagEntitySelected {ToPrettyString(ent)}"); // Orion-Edit | Log -> _log
+        _log.Debug($"AfterAntagEntitySelected {ToPrettyString(ent)}"); // Orion-Edit: Log -> _log
         MakeTraitor(args.EntityUid, ent);
     }
 
@@ -272,7 +272,7 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
 
         if (component.GiveBriefing)
         {
-            _antag.SendBriefing(traitor, GenerateBriefing(codewords, code, issuer, uplinkPreference), Color.Crimson, component.GreetSoundNotification); // Orion-Edit | Add uplinkPreference
+            _antag.SendBriefing(traitor, GenerateBriefing(codewords, code, issuer, uplinkPreference), Color.Crimson, component.GreetSoundNotification); // Orion-Edit: Add uplinkPreference
             _log.Debug($"MakeTraitor {ToPrettyString(traitor)} - Sent the Briefing");
         }
 
@@ -287,7 +287,7 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
         {
             EnsureComp<RoleBriefingComponent>(traitorRole.Value.Owner, out var briefingComp);
             // Goobstation Change - If you remove this, we lose ringtones and flavor in char menu. Upstream's version sucks.
-            briefingComp.Briefing = GenerateBriefingCharacter(codewords, code, issuer, uplinkPreference); // Orion-Edit | Add uplinkPreference
+            briefingComp.Briefing = GenerateBriefingCharacter(codewords, code, issuer, uplinkPreference); // Orion-Edit: Add uplinkPreference
         }
 
         var color = TraitorCodewordColor; // Fall back to a dark red Syndicate color if a prototype is not found
@@ -311,7 +311,7 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
     }
 
     // TODO: figure out how to handle this? add priority to briefing event?
-    private string GenerateBriefing(string[]? codewords, Note[]? uplinkCode, string objectiveIssuer, UplinkPreference uplinkPreference = UplinkPreference.Pda) // Orion-Edit | Add uplinkPreference
+    private string GenerateBriefing(string[]? codewords, Note[]? uplinkCode, string objectiveIssuer, UplinkPreference uplinkPreference = UplinkPreference.Pda) // Orion-Edit: Add uplinkPreference
     {
         var sb = new StringBuilder();
 //        sb.AppendLine(Loc.GetString("traitor-role-greeting", ("corporation", objectiveIssuer ?? Loc.GetString("objective-issuer-unknown")))); // Orion-Edit
@@ -358,7 +358,7 @@ public sealed class TraitorRuleSystem : GameRuleSystem<TraitorRuleComponent>
     }
 
     // Goobstation Change - Readd the character briefing text.
-    private string GenerateBriefingCharacter(string[]? codewords, Note[]? uplinkCode, string objectiveIssuer, UplinkPreference uplinkPreference = UplinkPreference.Pda) // Orion-Edit | Add uplinkPreference
+    private string GenerateBriefingCharacter(string[]? codewords, Note[]? uplinkCode, string objectiveIssuer, UplinkPreference uplinkPreference = UplinkPreference.Pda) // Orion-Edit: Add uplinkPreference
     {
         var sb = new StringBuilder();
         sb.AppendLine("\n" + Loc.GetString($"traitor-{objectiveIssuer.Replace(" ", "").ToLower()}-intro"));

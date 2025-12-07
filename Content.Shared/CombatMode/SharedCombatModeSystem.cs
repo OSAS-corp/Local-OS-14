@@ -77,8 +77,10 @@ public abstract class SharedCombatModeSystem : EntitySystem
         args.Handled = true;
         SetInCombatMode(uid, !component.IsInCombatMode, component);
 
-//        var msg = component.IsInCombatMode ? "action-popup-combat-enabled" : "action-popup-combat-disabled"; // Orion-Remove
-//        _popup.PopupClient(Loc.GetString(msg), args.Performer, args.Performer); // Orion-Remove
+/* Orion-Edit: Removed
+        var msg = component.IsInCombatMode ? "action-popup-combat-enabled" : "action-popup-combat-disabled";
+        _popup.PopupClient(Loc.GetString(msg), args.Performer, args.Performer);
+*/
     }
 
     public void SetCanDisarm(EntityUid entity, bool canDisarm, CombatModeComponent? component = null)

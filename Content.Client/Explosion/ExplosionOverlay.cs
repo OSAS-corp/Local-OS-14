@@ -100,7 +100,7 @@ public sealed class ExplosionOverlay : Overlay
 {
     private static readonly ProtoId<ShaderPrototype> UnshadedShader = "unshaded";
 
-//    [Dependency] private readonly IRobustRandom _robustRandom = default!; // Orion-Remove
+//    [Dependency] private readonly IRobustRandom _robustRandom = default!; // Orion-Edit: Removed
 
     [Dependency] private readonly IEntityManager _entMan = default!;
     [Dependency] private readonly IPrototypeManager _proto = default!;
@@ -234,8 +234,10 @@ public sealed class ExplosionOverlay : Overlay
             if (!tileSets.TryGetValue(j, out var tiles))
                 continue;
 
-//            var frameIndex = (int) Math.Min(visuals.Intensity[j] / textures.IntensityPerState, textures.FireFrames.Count - 1); // Orion-Remove
-//            var frames = textures.FireFrames[frameIndex]; // Orion-Remove
+/* // Orion-Edit: Removed
+            var frameIndex = (int) Math.Min(visuals.Intensity[j] / textures.IntensityPerState, textures.FireFrames.Count - 1);
+            var frames = textures.FireFrames[frameIndex];
+*/
 
             foreach (var tile in tiles)
             {

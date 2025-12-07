@@ -117,7 +117,7 @@ namespace Content.Server.Atmos.EntitySystems
                     }
                 }
             }
-/* // Orion-Remove
+/* // Orion-Edit: Removed
             else
             {
                 tile.Hotspot.State = (byte) (tile.Hotspot.Volume > Atmospherics.CellVolume * 0.4f ? 2 : 1);

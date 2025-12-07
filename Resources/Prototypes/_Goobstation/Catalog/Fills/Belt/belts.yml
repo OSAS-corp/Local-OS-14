@@ -157,12 +157,12 @@
   - type: ItemSlots
     slots:
       item:
-#        name: casul # Orion-Edit | Localization
+#        name: casul # Orion-Edit: Localization
         whitelist:
           tags:
           - WeaponPistolCasul
       item2:
-#        name: jackal # Orion-Edit | Localization
+#        name: jackal # Orion-Edit: Localization
         whitelist:
           tags:
           - WeaponPistolJackal

@@ -87,7 +87,7 @@ public sealed class UplinkSystem : EntitySystem
     /// <param name="uplinkEntity">The entity that will actually have the uplink functionality. Defaults to the PDA if null.</param>
     /// <param name="uplinkPreference">The preferred type of uplink. Defaults to PDA if not specified.</param>
     /// <returns>Whether or not the uplink was added successfully</returns>
-    public bool AddUplink(EntityUid user, FixedPoint2 balance, EntityUid? uplinkEntity = null, UplinkPreference uplinkPreference = UplinkPreference.Pda) // Orion-Edit | Add uplinkPreference
+    public bool AddUplink(EntityUid user, FixedPoint2 balance, EntityUid? uplinkEntity = null, UplinkPreference uplinkPreference = UplinkPreference.Pda) // Orion-Edit: Add uplinkPreference
     {
         // Orion-Start
         switch (uplinkPreference)

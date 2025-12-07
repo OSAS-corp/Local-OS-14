@@ -248,7 +248,7 @@ public sealed class PartStatusSystem : EntitySystem
 
             message.AddText("    " + Loc.GetString(locString,
                 ("possessive", possessive),
-                ("part", name), // Orion-Edit | partStatus.PartName -> name
+                ("part", name), // Orion-Edit: partStatus.PartName -> name
                 ("status", statusDescription)));
 
             message.PushNewline();

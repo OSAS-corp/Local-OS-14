@@ -817,11 +817,11 @@ namespace Content.Shared.Preferences
             var maxFlavorTextLength = configManager.GetCVar(CCVars.MaxFlavorTextLength);
             if (FlavorText.Length > maxFlavorTextLength)
             {
-                flavortext = FlavorText[..maxFlavorTextLength]; // Orion-Edit | Remove RemoveMarkupOrThrow
+                flavortext = FlavorText[..maxFlavorTextLength]; // Orion-Edit: Remove RemoveMarkupOrThrow
             }
             else
             {
-                flavortext = FlavorText; // Orion-Edit | Remove RemoveMarkupOrThrow
+                flavortext = FlavorText; // Orion-Edit: Remove RemoveMarkupOrThrow
             }
 
             // Orion-Start

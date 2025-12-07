@@ -555,7 +555,7 @@ namespace Content.Server.Mail
                                 mailComp.IsProfitable ? mailComp.Penalty : 0);
                         });
 
-//                        PenalizeStationFailedDelivery(uid, mailComp, "mail-penalty-expired"); // Orion-Remove
+//                        PenalizeStationFailedDelivery(uid, mailComp, "mail-penalty-expired"); // Orion-Edit: Removed
                     },
                     mailComp.priorityCancelToken.Token);
             }
