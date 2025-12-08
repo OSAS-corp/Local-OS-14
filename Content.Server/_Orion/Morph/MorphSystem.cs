@@ -152,16 +152,17 @@ public sealed class MorphSystem : SharedMorphSystem
         if (!TryComp<HungerComponent>(ent, out var hunger))
             return;
 
-        if (_hands.TryGetActiveItem((args.HitEntities[0], hands), out var item) && _random.Prob(ent.Comp.EatWeaponChanceOnHit))
-        {
-            if (_hunger.GetHunger(hunger) < ent.Comp.EatWeaponHungerReq)
-                return;
+        if (!_hands.TryGetActiveItem((args.HitEntities[0], hands), out var item) ||
+            !_random.Prob(ent.Comp.EatWeaponChanceOnHit))
+            return;
 
-            ent.Comp.ContainedCreatures.Add(item.Value);
-            _transform.SetCoordinates(item.Value, new EntityCoordinates(EntityUid.Invalid, Vector2.Zero));
-            _audioSystem.PlayPvs(ent.Comp.SoundDevour, ent);
-            _hunger.ModifyHunger(ent, -ent.Comp.EatWeaponHungerReq, hunger);
-        }
+        if (_hunger.GetHunger(hunger) < ent.Comp.EatWeaponHungerReq)
+            return;
+
+        ent.Comp.ContainedCreatures.Add(item.Value);
+        _transform.SetCoordinates(item.Value, new EntityCoordinates(EntityUid.Invalid, Vector2.Zero));
+        _audioSystem.PlayPvs(ent.Comp.SoundDevour, ent);
+        _hunger.ModifyHunger(ent, -ent.Comp.EatWeaponHungerReq, hunger);
     }
 
     private void OnInteract(Entity<MorphComponent> ent, ref InteractHandEvent args)
@@ -274,11 +275,11 @@ public sealed class MorphSystem : SharedMorphSystem
         if (TryComp<ChameleonProjectorComponent>(uid, out var chamel) && chamel.Disguised != null)
             RemCompDeferred<MorphAmbushComponent>(chamel.Disguised.Value);
 
-        if (TryComp<InputMoverComponent>(uid, out var input))
-        {
-            input.CanMove = true;
-            Dirty(uid, input);
-        }
+        if (!TryComp<InputMoverComponent>(uid, out var input))
+            return;
+
+        input.CanMove = true;
+        Dirty(uid, input);
     }
 
     private bool NonMorphInRange(EntityUid uid, MorphComponent component)
@@ -286,13 +287,14 @@ public sealed class MorphSystem : SharedMorphSystem
         var coordinates = _transform.GetMapCoordinates(uid);
         foreach (var entity in _lookup.GetEntitiesInRange(coordinates, component.AmbushBlockRange))
         {
-            if (HasComp<MindContainerComponent>(entity) && !HasComp<MorphComponent>(entity) && !HasComp<GhostComponent>(entity))
-            {
-                if ((TryComp<MobStateComponent>(entity, out var entityMobState) && HasComp<GhostTakeoverAvailableComponent>(entity) && _mobState.IsDead(entity, entityMobState)))
-                    continue;
+            if (!HasComp<MindContainerComponent>(entity) || HasComp<MorphComponent>(entity) ||
+                HasComp<GhostComponent>(entity))
+                continue;
 
-                return true;
-            }
+            if ((TryComp<MobStateComponent>(entity, out var entityMobState) && HasComp<GhostTakeoverAvailableComponent>(entity) && _mobState.IsDead(entity, entityMobState)))
+                continue;
+
+            return true;
         }
 
         return false;
