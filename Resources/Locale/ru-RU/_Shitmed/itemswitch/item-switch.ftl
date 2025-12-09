@@ -46,6 +46,7 @@ itemswitch-component-state-scalpel = скальпель
 itemswitch-component-state-bonesaw = пила
 itemswitch-component-state-bonegel = костный гель
 itemswitch-component-state-bonesetter = установщик костей
-itemswitch-component-state-cautery = термокаутер
+itemswitch-component-state-cautery = прижигатель
+itemswitch-component-state-stitches = хирургическая нить
 itemswitch-component-state-drill = дрель
 # Orion-End
