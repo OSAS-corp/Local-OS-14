@@ -178,7 +178,7 @@
   - type: LightBulb
     bulb: Bulb
     color: "#e6d8cb" # 4000K color temp | Orion-Edit: Changed color
-    lightEnergy: 0.8
+    lightEnergy: 0.8 # Orion-Edit: Changed color
     lightRadius: 6
     lightSoftness: 1.1
   - type: Tag
