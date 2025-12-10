@@ -240,7 +240,7 @@
   - type: PointLight
     enabled: true
     radius: 15
-    energy: 1.3 # Orion-Edit: Changed color
+    energy: 1.3 # Orion-Edit: 1 > 1.3
     softness: 0.9
     color: "#c9c7c2" # Orion-Edit: Changed color
   - type: PoweredLight
