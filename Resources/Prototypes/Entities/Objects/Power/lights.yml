@@ -288,7 +288,7 @@
   components:
   - type: LightBulb
     color: "#dbd1bc" # 5000K color temp | Orion-Edit: Changed color
-    lightEnergy: 1
+    lightEnergy: 1 # Orion-Edit: Changed color
     lightRadius: 10
     lightSoftness: 1
     PowerUse: 25
