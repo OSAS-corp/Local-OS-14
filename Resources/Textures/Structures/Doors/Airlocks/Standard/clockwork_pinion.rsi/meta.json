@@ -1,7 +1,7 @@
 {
   "version": 1,
   "license": "CC-BY-SA-3.0",
-  "copyright": "Taken from tgstation at https://github.com/tgstation/tgstation/blob/a406e8388f763e496caac32c3cf11e455b20d28d/icons/obj/doors/airlocks/clockwork/pinion_airlock.dmi and https://github.com/tgstation/tgstation/blob/a406e8388f763e496caac32c3cf11e455b20d28d/icons/obj/doors/airlocks/clockwork/overlays.dmi modified for SS14 by MACMAN2003",
+  "copyright": "Taken from tgstation at https://github.com/tgstation/tgstation/blob/a406e8388f763e496caac32c3cf11e455b20d28d/icons/obj/doors/airlocks/clockwork/pinion_airlock.dmi and https://github.com/tgstation/tgstation/blob/a406e8388f763e496caac32c3cf11e455b20d28d/icons/obj/doors/airlocks/clockwork/overlays.dmi modified for SS14 by MACMAN2003. Edited by UmbiMax",
   "size": {
     "x": 32,
     "y": 32
@@ -29,12 +29,12 @@
       "name": "closing",
       "delays": [
         [
+          0.09,
           0.1,
-          0.1,
           0.07,
           0.07,
           0.07,
-          0.2
+          0.1
         ]
       ]
     },
@@ -42,12 +42,12 @@
       "name": "closing_unlit",
       "delays": [
         [
+          0.09,
           0.1,
-          0.1,
           0.07,
           0.07,
           0.07,
-          0.2
+          0.1
         ]
       ]
     },
@@ -76,12 +76,12 @@
       "name": "opening",
       "delays": [
         [
+          0.09,
           0.1,
-          0.1,
           0.07,
           0.07,
           0.07,
-          0.2
+          0.1
         ]
       ]
     },
@@ -89,12 +89,12 @@
       "name": "opening_unlit",
       "delays": [
         [
+          0.09,
           0.1,
-          0.1,
           0.07,
           0.07,
           0.07,
-          0.2
+          0.1
         ]
       ]
     },
@@ -102,12 +102,12 @@
       "name": "panel_closing",
       "delays": [
         [
+          0.09,
           0.1,
-          0.1,
           0.07,
           0.07,
           0.07,
-          0.2
+          0.1
         ]
       ]
     },
@@ -138,12 +138,12 @@
       "name": "panel_opening",
       "delays": [
         [
+          0.09,
           0.1,
-          0.1,
           0.07,
           0.07,
           0.07,
-          0.2
+          0.1
         ]
       ]
     },

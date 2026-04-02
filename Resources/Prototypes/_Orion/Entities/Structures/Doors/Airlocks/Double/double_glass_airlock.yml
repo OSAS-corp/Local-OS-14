@@ -5,10 +5,10 @@
   description: It opens, it closes, and maybe crushes you, but it's bigger than normal door.
   components:
   - type: Door
-    closeTimeOne: 0.5
-    closeTimeTwo: 0.4
-    openTimeOne: 0.5
-    openTimeTwo: 0.4
+    closeTimeOne: 0.65
+    closeTimeTwo: 0.5
+    openTimeOne: 0.65
+    openTimeTwo: 0.5
     occludes: false
   - type: Occluder
     enabled: false
