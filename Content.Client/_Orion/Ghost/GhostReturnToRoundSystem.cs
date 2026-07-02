@@ -14,7 +14,6 @@ public sealed class GhostReturnToRoundSystem : SharedGhostReturnToRoundSystem
     [Dependency] private readonly IGameTiming _gameTiming = default!;
 
     private TimeSpan _lastTimeLeft = TimeSpan.Zero;
-    private bool _lastButtonState = true;
 
     public override void FrameUpdate(float frameTime)
     {
@@ -36,10 +35,10 @@ public sealed class GhostReturnToRoundSystem : SharedGhostReturnToRoundSystem
         var timeLeft = rawTimeLeft > TimeSpan.Zero ? rawTimeLeft : TimeSpan.Zero;
         var canReturn = timeLeft == TimeSpan.Zero;
 
-        var displayTime = timeLeft.ToString(@"mm\:ss");
+        var displayTime = FormatTimeLeft(timeLeft);
 
         var buttonStateChanged = ui.ReturnToRound.Disabled == canReturn;
-        var timeChanged = _lastTimeLeft.ToString(@"mm\:ss") != displayTime;
+        var timeChanged = FormatTimeLeft(_lastTimeLeft) != displayTime;
 
         if (!buttonStateChanged && !timeChanged)
             return;
@@ -50,6 +49,13 @@ public sealed class GhostReturnToRoundSystem : SharedGhostReturnToRoundSystem
             : Loc.GetString("ghost-gui-return-to-round-button", ("time", displayTime));
 
         _lastTimeLeft = timeLeft;
-        _lastButtonState = !canReturn;
+    }
+
+    private static string FormatTimeLeft(TimeSpan timeLeft)
+    {
+        var totalMinutes = (int) timeLeft.TotalMinutes;
+        var seconds = timeLeft.Seconds;
+
+        return $"{totalMinutes:00}:{seconds:00}";
     }
 }
